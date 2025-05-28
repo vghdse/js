@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 
 cmd({
   pattern: 'buttonmenu',
@@ -23,3 +23,4 @@ cmd({
 
   await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
 });
+*/
