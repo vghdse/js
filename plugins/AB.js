@@ -31,7 +31,7 @@ cmd({
             contextInfo: {
                 externalAdReply: {
                     title: "JavaScript Obfuscator",
-                    body: "BY SUBZERO",
+                    body: "Powered By Mr Frank",
                     thumbnail: await axios.get('https://files.catbox.moe/rthhuj.jpg', { 
                         responseType: 'arraybuffer' 
                     }).then(res => res.data).catch(() => null),
