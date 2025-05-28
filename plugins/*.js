@@ -120,7 +120,7 @@ cmd({
             contextInfo: {
                 externalAdReply: {
                     title: apiResponse.result.title,
-                    body: `Quality: ${apiResponse.result.quality} | Via GiftedTech API`,
+                    body: `Quality: ${apiResponse.result.quality} | Via Subzero API`,
                     thumbnail: await axios.get(apiResponse.result.thumbnail, { 
                         responseType: 'arraybuffer' 
                     }).then(res => res.data).catch(() => null),
