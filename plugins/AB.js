@@ -1,26 +1,47 @@
-/*const { cmd } = require('../command');
+const { cmd } = require('../command');
+const axios = require('axios');
 
 cmd({
-  pattern: 'buttonmenu',
-  alias: ['btnmenu'],
-  desc: 'Send an interactive button message',
-  category: 'utility',
-  react: '🧭',
-  filename: __filename,
-}, async (conn, m) => {
-  const buttons = [
-    { buttonId: 'option_1', buttonText: { displayText: '🔊 Normal Audio' }, type: 1 },
-    { buttonId: 'option_2', buttonText: { displayText: '📁 YTMP3 Document' }, type: 1 }
-  ];
+    pattern: "obfuscate2",
+    alias: ["obf2", "encrypt2"],
+    react: "🔒",
+    desc: "Obfuscate JavaScript code",
+    category: "tools",
+    use: "<javascript code>",
+    filename: __filename
+}, async (conn, m, mek, { from, q, reply }) => {
+    try {
+        if (!q) return reply("❌ Please provide JavaScript code to obfuscate");
 
-  const buttonMessage = {
-    text: '🎧 *Lily - Alan Walker*\n\nChoose an option:',
-    footer: 'Reply by tapping a button below.',
-    buttons,
-    headerType: 1,
-    viewOnce: true
-  };
+        await reply("⏳ Obfuscating your code...");
 
-  await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
+        // Encode the input code for URL
+        const encodedCode = encodeURIComponent(q);
+        const apiUrl = `https://api.giftedtech.web.id/api/tools/encryptv3?apikey=gifted&code=${encodedCode}`;
+
+        const { data } = await axios.get(apiUrl);
+
+        if (!data?.result?.encrypted_code) {
+            return reply("❌ Failed to obfuscate the code");
+        }
+
+        // Send the obfuscated code
+        await conn.sendMessage(from, {
+            text: `*Obfuscated JavaScript Code:*\n\n${data.result.encrypted_code}`,
+            contextInfo: {
+                externalAdReply: {
+                    title: "JavaScript Obfuscator",
+                    body: "BY SUBZERO",
+                    thumbnail: await axios.get('https://files.catbox.moe/rthhuj.jpg', { 
+                        responseType: 'arraybuffer' 
+                    }).then(res => res.data).catch(() => null),
+                    mediaType: 2
+                }
+            }
+        }, { quoted: mek });
+
+    } catch (error) {
+        console.error("Obfuscation error:", error);
+        reply(`❌ Error: ${error.response?.data?.message || error.message}`);
+    }
 });
-*/
