@@ -4,7 +4,7 @@
     "description": "Whiskey Sockets Baileys Whatsapp bot By Mr Frank",
     "logo": "https://i.postimg.cc/zv76KffW/IMG-20250115-WA0020.jpg",
     "keywords": ["bot"],
-    "documentation-link": "https://subzero-docs.vercel.app",
+    "documentation-link": "https://subzero-auth.koyeb.app",
     "owner-verification": "hoxcok15@gmail.com",
   
     "env": {
@@ -14,13 +14,7 @@
         "required": true
         
       },
-      "PREFIX": {
-        "description": "Bot command prefix, (e.g, . , ! @ etc",
-        "value":".",
-        "required": true
-        
-      },
-
+      
     "OWNER_NUMBER": {
       "description": "Enter owner number",
       "required": false,
