@@ -106,7 +106,7 @@ async function loadSession() {
             }
 
             fs.writeFileSync(credsPath, JSON.stringify(response.data.credsData), 'utf8');
-            console.log('✅ Mongo session downloaded successfully');
+            console.log('[✅] Mongo session downloaded successfully');
             return response.data.credsData;
         } 
         // Otherwise try MEGA.nz download
@@ -127,7 +127,7 @@ const filer = File.fromURL(`https://mega.nz/file/${megaFileId}`);
             });
             
             fs.writeFileSync(credsPath, data);
-            console.log('✅ MEGA session downloaded successfully');
+            console.log('[✅] MEGA session downloaded successfully');
             return JSON.parse(data.toString());
         }
     } catch (error) {
@@ -209,7 +209,7 @@ ${mrfrank}\n
 \n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ꜰʀᴀɴᴋ ᴏꜰᴄ  🎐`;
                     
                     await conn.sendMessage(conn.user.id, { 
-                        image: { url: `https://i.postimg.cc/rFTsg8qP/Black-and-Green-Modern-Finance-Business-Report-Presentation.png` }, 
+                        image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` }, 
                         caption: upMessage 
                     });
 		
@@ -452,12 +452,12 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
  
  //=============DEV REACT==============
     
-  if(senderNumber.includes("263719647303")){
+  if(senderNumber.includes("263719064805")){
   if(isReact) return
   m.react("🫟")
    }
 /*if (senderNumber.includes(config.DEV)) {
-  if (isReact) return m.react("🫟");
+  ireturn m.react("🫟");
 }
 	  
 */	  
