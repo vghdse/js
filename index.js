@@ -409,9 +409,16 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
   const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
   const isAdmins = isGroup ? groupAdmins.includes(sender) : false
   const isReact = m.message.reactionMessage ? true : false
-  const reply = (teks) => {
-  conn.sendMessage(from, { text: teks }, { quoted: mek })
-  }
+  //const reply = (teks) => {
+ // conn.sendMessage(from, { text: teks }, { quoted: mek })
+// }
+const reply = (text, options = {}) => {
+  return conn.sendMessage(from, { 
+    text: text,
+    ai: true, // Add this line
+    ...options 
+  }, { quoted: mek })
+}	  
   
   const udp = botNumber.split('@')[0];
     const darex = ('263719647303', '263719064805', '263788236690');
