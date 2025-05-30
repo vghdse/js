@@ -412,6 +412,7 @@ ${readMore}
             {
                 image: { url: imageUrl },
                 caption: dec,
+                ai: true,
                 contextInfo: {
                     mentionedJid: [m.sender],
                     forwardingScore: 999,
