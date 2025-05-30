@@ -210,7 +210,8 @@ ${mrfrank}\n
                     
                     await conn.sendMessage(conn.user.id, { 
                         image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` }, 
-                        caption: upMessage 
+                        caption: upMessage
+			ai: true,
                     });
 		
    // Send settings menu after connection message
@@ -309,6 +310,7 @@ ${mrfrank}\n
                     await conn.sendMessage(conn.user.id, {
                         image: { url: 'https://i.postimg.cc/3wRtHQyn/Dark-Blue-and-White-Simple-Thesis-Defense-Presentation.png' },
                         caption: cmdList
+			ai: true,
                     });
                     
                 } catch (sendError) {
