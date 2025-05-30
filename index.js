@@ -402,7 +402,11 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
   const isMe = botNumber.includes(senderNumber)
   const isOwner = ownerNumber.includes(senderNumber) || isMe
   const botNumber2 = await jidNormalizedUser(conn.user.id);
-  const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => {}) : ''
+  // const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => {}) : ''
+  const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => {
+  console.error('Error fetching group metadata:', e);
+  return {};
+}) : {};
   const groupName = isGroup ? groupMetadata.subject : ''
   const participants = isGroup ? await groupMetadata.participants : ''
   const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
