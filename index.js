@@ -209,9 +209,10 @@ ${mrfrank}\n
 \n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ꜰʀᴀɴᴋ ᴏꜰᴄ  🎐`;
                     
                     await conn.sendMessage(conn.user.id, { 
-                        image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` }, 
-                        caption: upMessage
+                        image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` },
 			ai: true,
+                        caption: upMessage
+			
                     });
 		
    // Send settings menu after connection message
@@ -309,8 +310,9 @@ ${mrfrank}\n
 
                     await conn.sendMessage(conn.user.id, {
                         image: { url: 'https://i.postimg.cc/3wRtHQyn/Dark-Blue-and-White-Simple-Thesis-Defense-Presentation.png' },
-                        caption: cmdList
-			ai: true,
+                        ai: true,
+			caption: cmdList
+			 
                     });
                     
                 } catch (sendError) {
