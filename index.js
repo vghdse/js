@@ -195,8 +195,9 @@ async function connectToWA() {
                 // Send connection message
      	
                 try {
-		const username = config.REPO.split('/').slice(3, 4)[0];
-                const mrfrank = `https://github.com/${username}`;
+		// const username = config.REPO.split('/').slice(3, 4)[0];
+             const username = `mrfr8nk`;
+             const mrfrank = `https://github.com/${username}`;
 		
                     const upMessage = `\`SubZero Bot Connected!\` ✅
 \n\n> _Light, Cold, Icy, Fast & Rich Loaded With Features, SubZero W.A Bot._\n\n────────────────
@@ -309,7 +310,7 @@ ${mrfrank}\n
                     `;
 
                     await conn.sendMessage(conn.user.id, {
-                        image: { url: 'https://files.catbox.moe/bquqww.jpg' },
+                        image: { url: 'https://files.catbox.moe/703kuc.jpg' },
                         ai: true,
 			caption: cmdList
 			 
