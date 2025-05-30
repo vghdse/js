@@ -309,7 +309,7 @@ ${mrfrank}\n
                     `;
 
                     await conn.sendMessage(conn.user.id, {
-                        image: { url: 'https://i.postimg.cc/3wRtHQyn/Dark-Blue-and-White-Simple-Thesis-Defense-Presentation.png' },
+                        image: { url: 'https://files.catbox.moe/bquqww.jpg' },
                         ai: true,
 			caption: cmdList
 			 
