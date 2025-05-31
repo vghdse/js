@@ -6,7 +6,7 @@ cmd({
     pattern: "list",
     alias: ["listcmd", "commands"],
     desc: "Show all available commands with descriptions",
-    category: "main",
+    category: "menu",
     react: "📜",
     filename: __filename
 }, async (conn, mek, m, { from, reply }) => {
@@ -28,7 +28,7 @@ cmd({
 │ • 👑 Owner: ${config.OWNER_NAME}
 │ • ⚙️ Prefix: [${config.PREFIX}]
 │ • 🌐 Platform: Heroku
-│ • 📦 Version: 2.6.0
+│ • 📦 Version: 4.0.0
 │ • 🕒 Runtime: ${runtime(process.uptime())}
 │
 │ *📊 COMMAND STATS*
@@ -73,7 +73,7 @@ cmd({
         await conn.sendMessage(
             from,
             {
-                image: { url: config.BOT_IMAGE || 'https://files.catbox.moe/18il7k.jpg' },
+                image: { url: config.MENU_IMAGE_URL || 'https://files.catbox.moe/7zfdcq.jpg' },
                 caption: menuText,
                 contextInfo: {
                     mentionedJid: [m.sender],
