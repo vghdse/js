@@ -1,10 +1,11 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const yts = require('yt-search');
 const Config = require('../config');
 
 // Optimized axios
 const axiosInstance = axios.create({
-  timeout: 10000, // reduced timeout
+  timeout: 10000,
   maxRedirects: 5
 });
 
@@ -25,159 +26,33 @@ cmd(
             let [input, quality = '92'] = text.split(' ');
             quality = ['92', '128', '256', '320'].includes(quality) ? quality : '92';
 
-            await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
-
-            const videoUrl = await getVideoUrl(input);
-            if (!videoUrl) return reply('🎵 No results found for your search');
-
-            const apiUrl = `https://mrfrank-api.vercel.app/api/ytmp3dl?url=${encodeURIComponent(videoUrl)}&quality=${quality}`;
-            const apiResponse = await axiosInstance.get(apiUrl);
-            if (!apiResponse.data?.status || !apiResponse.data.download?.url) {
-                return reply('🎵 Failed to fetch audio - API error');
+            // Safely send reaction
+            try {
+                if (mek?.key?.id) {
+                    await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
+                }
+            } catch (reactError) {
+                console.error('Failed to send reaction:', reactError);
             }
 
-            const songData = apiResponse.data;
-
-            // Fast parallel fetch for thumbnail and audio
-            const [thumbnailBuffer, audioResponse] = await Promise.all([
-                fetchThumbnail(songData.metadata.thumbnail),
-                axiosInstance.get(songData.download.url, {
-                    responseType: 'arraybuffer',
-                    headers: { Referer: 'https://www.youtube.com/' }
-                })
-            ]);
-
-            const audioBuffer = Buffer.from(audioResponse.data, 'binary');
-
-            const songInfo = `🎧 *${songData.metadata.title}*\n` +
-                            `⏱ ${songData.metadata.timestamp} | ${songData.download.quality}\n` +
-                            `👤 ${songData.metadata.author?.name || 'Unknown'}\n` +
-                            `👀 ${songData.metadata.views || 'N/A'} views\n` +
-                            `📅 ${songData.metadata.ago || 'Unknown upload date'}\n\n` +
-                            `🔗 ${songData.url}\n\n`+
-                            `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴜʙᴢᴇʀᴏ`;
-
-            await conn.sendMessage(mek.chat, {
-                image: thumbnailBuffer,
-                caption: songInfo,
-                contextInfo: {
-                    externalAdReply: {
-                        title: songData.metadata.title,
-                        body: `Quality: ${songData.download.quality} | ${songData.metadata.views || 'N/A'} views`,
-                        thumbnail: thumbnailBuffer,
-                        mediaType: 1,
-                        mediaUrl: songData.url,
-                        sourceUrl: songData.url
-                    }
+            // Get video URL using yt-search
+            let videoUrl, videoInfo;
+            if (input.match(/youtu\.?be/)) {
+                videoUrl = input;
+                // Extract video ID for yt-search
+                const videoId = input.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?#]+)/)?.[1];
+                if (videoId) {
+                    videoInfo = await yts({ videoId });
                 }
-            }, { quoted: mek });
+            } else {
+                const searchResults = await yts(input);
+                if (!searchResults.videos.length) return reply('🎵 No results found for your search');
+                videoUrl = searchResults.videos[0].url;
+                videoInfo = searchResults.videos[0];
+            }
 
-            await conn.sendMessage(mek.chat, {
-                audio: audioBuffer,
-                mimetype: 'audio/mpeg',
-                fileName: songData.download.filename,
-                ptt: false,
-                contextInfo: {
-                    externalAdReply: {
-                        title: songData.metadata.title,
-                        body: `🎵 ${Config.BOT_NAME}`,
-                        thumbnail: thumbnailBuffer,
-                        mediaType: 1,
-                        mediaUrl: songData.url,
-                        sourceUrl: songData.url
-                    }
-                }
-            }, { quoted: mek });
-
-            await conn.sendMessage(mek.chat, {
-                document: audioBuffer,
-                mimetype: 'audio/mpeg',
-                fileName: `${songData.metadata.title}.mp3`,
-                contextInfo: {
-                    externalAdReply: {
-                        title: `${songData.metadata.title} (YTMP3)`,
-                        body: `🎵 Sent as document by ${Config.BOT_NAME}`,
-                        thumbnail: thumbnailBuffer,
-                        mediaType: 1,
-                        mediaUrl: songData.url,
-                        sourceUrl: songData.url
-                    }
-                }
-            }, { quoted: mek });
-
-            await conn.sendMessage(mek.chat, { react: { text: "✅", key: mek.key } });
-
-        } catch (error) {
-            console.error('Error:', error);
-            await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
-            reply('🎵 Error: ' + (error.message || 'Please try again later'));
-        }
-    }
-);
-
-// Get video URL from query or direct link
-async function getVideoUrl(input) {
-    if (input.match(/youtu\.?be/)) return input;
-    try {
-        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(input)}`;
-        const response = await axiosInstance.get(searchUrl);
-        const videoId = response.data.match(/\/watch\?v=([a-zA-Z0-9_-]{11})/)?.[1];
-        return videoId ? `https://youtube.com/watch?v=${videoId}` : null;
-    } catch (e) {
-        console.error('Search error:', e);
-        return null;
-    }
-}
-
-// Fetch thumbnail or return null
-async function fetchThumbnail(url) {
-    try {
-        const res = await axiosInstance.get(url, { responseType: 'arraybuffer' });
-        return Buffer.from(res.data, 'binary');
-    } catch {
-        return null;
-    }
-}
-
-
-/*const { cmd } = require('../command');
-const axios = require('axios');
-const Config = require('../config');
-
-// Configure axios with better settings
-const axiosInstance = axios.create({
-  timeout: 15000, // 15 second timeout
-  maxRedirects: 5
-});
-
-cmd(
-    {
-        pattern: 'song',
-        alias: ['play', 'music'],
-        desc: 'YouTube audio downloader',
-        category: 'media',
-        react: '⌛',
-        use: '<YouTube URL or search query> [quality]',
-        filename: __filename,
-    },
-    async (conn, mek, m, { text, reply }) => {
-        try {
-            if (!text) return reply('🎵 *Usage:* .song <query/url> [quality]\nExample: .song https://youtu.be/ox4tmEV6-QU\n.song Alan Walker Lily 128');
-
-            // Parse input
-            let [input, quality = '92'] = text.split(' ');
-            quality = ['92', '128', '256', '320'].includes(quality) ? quality : '92';
-
-            await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
-
-            // Get video URL
-            const videoUrl = await getVideoUrl(input);
-            if (!videoUrl) return reply('🎵 No results found for your search');
-
-            // Fetch song data
             const apiUrl = `https://mrfrank-api.vercel.app/api/ytmp3dl?url=${encodeURIComponent(videoUrl)}&quality=${quality}`;
             const apiResponse = await axiosInstance.get(apiUrl);
-            
             if (!apiResponse.data?.status || !apiResponse.data.download?.url) {
                 return reply('🎵 Failed to fetch audio - API error');
             }
@@ -187,83 +62,127 @@ cmd(
             // Get thumbnail
             let thumbnailBuffer;
             try {
-                const thumbnailResponse = await axiosInstance.get(songData.metadata.thumbnail, {
-                    responseType: 'arraybuffer'
-                });
-                thumbnailBuffer = Buffer.from(thumbnailResponse.data, 'binary');
-            } catch {
+                const thumbnailUrl = videoInfo?.thumbnail || songData.metadata.thumbnail;
+                if (thumbnailUrl) {
+                    const response = await axiosInstance.get(thumbnailUrl, { responseType: 'arraybuffer' });
+                    thumbnailBuffer = Buffer.from(response.data, 'binary');
+                }
+            } catch (e) {
+                console.error('Failed to fetch thumbnail:', e);
                 thumbnailBuffer = null;
             }
 
-            // Format song information with views and upload date
-            const songInfo = `🎧 *${songData.metadata.title}*\n` +
-                            `⏱ ${songData.metadata.timestamp} | ${songData.download.quality}\n` +
-                            `👤 ${songData.metadata.author?.name || 'Unknown'}\n` +
-                            `👀 ${songData.metadata.views || 'N/A'} views\n` +
+            const songInfo = `🎧 *${songData.metadata.title || videoInfo?.title || 'Unknown Title'}*\n` +
+                            `⏱ ${songData.metadata.timestamp || videoInfo?.timestamp || 'N/A'} | ${songData.download.quality}\n` +
+                            `👤 ${songData.metadata.author?.name || videoInfo?.author?.name || 'Unknown'}\n` +
+                            `👀 ${songData.metadata.views || videoInfo?.views || 'N/A'} views\n` +
                             `📅 ${songData.metadata.ago || 'Unknown upload date'}\n\n` +
-                            `🔗 ${songData.url}\n\n`+
-                            `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴜʙᴢᴇʀᴏ`;
+                            `🔗 ${songData.url || videoUrl}\n\n` +
+                            `*Reply with:*\n` +
+                            `1 - For Audio Format 🎵\n` +
+                            `2 - For Document Format 📁\n\n` +
+                            `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ${Config.BOT_NAME}`;
 
-            // Send song info
-            await conn.sendMessage(mek.chat, {
+            const sentMsg = await conn.sendMessage(mek.chat, {
                 image: thumbnailBuffer,
                 caption: songInfo,
                 contextInfo: {
                     externalAdReply: {
-                        title: songData.metadata.title,
-                        body: `Quality: ${songData.download.quality} | ${songData.metadata.views || 'N/A'} views`,
+                        title: songData.metadata.title || videoInfo?.title || 'YouTube Audio',
+                        body: `Quality: ${songData.download.quality}`,
                         thumbnail: thumbnailBuffer,
                         mediaType: 1,
-                        mediaUrl: songData.url,
-                        sourceUrl: songData.url
+                        mediaUrl: songData.url || videoUrl,
+                        sourceUrl: songData.url || videoUrl
                     }
                 }
             }, { quoted: mek });
 
-            // Download and send audio
-            const audioResponse = await axiosInstance.get(songData.download.url, {
-                responseType: 'arraybuffer',
-                headers: { 'Referer': 'https://www.youtube.com/' }
-            });
+            // Timeout after 60 seconds
+            const timeout = setTimeout(() => {
+                conn.ev.off('messages.upsert', messageListener);
+                reply("⌛ Session timed out. Please use the command again if needed.");
+            }, 60000);
 
-            await conn.sendMessage(mek.chat, {
-                audio: Buffer.from(audioResponse.data, 'binary'),
-                mimetype: 'audio/mpeg',
-                fileName: songData.download.filename,
-                contextInfo: {
-                    externalAdReply: {
-                        title: songData.metadata.title,
-                        body: `🎵 ${Config.BOT_NAME}`,
-                        thumbnail: thumbnailBuffer,
-                        mediaType: 1,
-                        mediaUrl: songData.url,
-                        sourceUrl: songData.url
+            const messageListener = async (messageUpdate) => {
+                try {
+                    const mekInfo = messageUpdate?.messages[0];
+                    if (!mekInfo?.message) return;
+
+                    const message = mekInfo.message;
+                    const messageType = message.conversation || message.extendedTextMessage?.text;
+                    const isReplyToSentMsg = message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
+
+                    if (!isReplyToSentMsg || !['1', '2'].includes(messageType?.trim())) return;
+
+                    // Remove listener and timeout
+                    conn.ev.off('messages.upsert', messageListener);
+                    clearTimeout(timeout);
+
+                    const processingMsg = await reply("⏳ Processing your request...");
+                    
+                    const audioResponse = await axiosInstance.get(songData.download.url, {
+                        responseType: 'arraybuffer',
+                        headers: { Referer: 'https://www.youtube.com/' }
+                    });
+                    const audioBuffer = Buffer.from(audioResponse.data, 'binary');
+
+                    const fileName = `${songData.metadata.title || videoInfo?.title || 'audio'}.mp3`.replace(/[<>:"\/\\|?*]+/g, '');
+
+                    if (messageType.trim() === "1") {
+                        await conn.sendMessage(mek.chat, {
+                            audio: audioBuffer,
+                            mimetype: 'audio/mpeg',
+                            fileName: fileName,
+                            ptt: false
+                        }, { quoted: mek });
+                    } else {
+                        await conn.sendMessage(mek.chat, {
+                            document: audioBuffer,
+                            mimetype: 'audio/mpeg',
+                            fileName: fileName
+                        }, { quoted: mek });
+                    }
+
+                   /* await conn.sendMessage(mek.chat, { 
+                        text: '✅ Download completed successfully!', 
+                        edit: { ...processingMsg.key, remoteJid: mek.chat }
+                    });
+                    */
+                    try {
+                        if (mekInfo?.key?.id) {
+                            await conn.sendMessage(mek.chat, { react: { text: "✅", key: mekInfo.key } });
+                        }
+                    } catch (reactError) {
+                        console.error('Failed to send success reaction:', reactError);
+                    }
+
+                } catch (error) {
+                    console.error('Error in listener:', error);
+                    await reply('🎵 Error processing your request: ' + (error.message || 'Please try again'));
+                    
+                    try {
+                        if (mek?.key?.id) {
+                            await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
+                        }
+                    } catch (reactError) {
+                        console.error('Failed to send error reaction:', reactError);
                     }
                 }
-            });
+            };
 
-            await conn.sendMessage(mek.chat, { react: { text: "✅", key: mek.key } });
+            conn.ev.on('messages.upsert', messageListener);
 
         } catch (error) {
             console.error('Error:', error);
-            await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
+            try {
+                if (mek?.key?.id) {
+                    await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
+                }
+            } catch (reactError) {
+                console.error('Failed to send error reaction:', reactError);
+            }
             reply('🎵 Error: ' + (error.message || 'Please try again later'));
         }
     }
 );
-
-// Helper to get video URL
-async function getVideoUrl(input) {
-    if (input.match(/youtu\.?be/)) return input;
-    
-    try {
-        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(input)}`;
-        const response = await axiosInstance.get(searchUrl);
-        const videoId = response.data.match(/\/watch\?v=([a-zA-Z0-9_-]{11})/)?.[1];
-        return videoId ? `https://youtube.com/watch?v=${videoId}` : null;
-    } catch (e) {
-        console.error('Search error:', e);
-        return null;
-    }
-              }
-*/
