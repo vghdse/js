@@ -2,7 +2,7 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
 const Config = require('../config');
-
+/*
 // Turbocharged axios with aggressive timeouts
 const axiosInstance = axios.create({
   timeout: 5000, // ultra-fast timeout
@@ -163,6 +163,7 @@ cmd(
         }
     }
 );
+*/
 cmd({
   pattern: "post",
   alias: ["poststatus", "story", "meqdia"],
