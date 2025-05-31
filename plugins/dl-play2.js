@@ -78,10 +78,10 @@ cmd(
                             `👀 ${songData.metadata.views || videoInfo?.views || 'N/A'} views\n` +
                             `📅 ${songData.metadata.ago || 'Unknown upload date'}\n\n` +
                             `🔗 ${songData.url || videoUrl}\n\n` +
-                            `*Reply with:*\n` +
+                            `\`Reply with:\`\n` +
                             `1 - For Audio Format 🎵\n` +
                             `2 - For Document Format 📁\n\n` +
-                            `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ${Config.BOT_NAME}`;
+                            `> ${Config.FOOTER}`;
 
             const sentMsg = await conn.sendMessage(mek.chat, {
                 image: thumbnailBuffer,
