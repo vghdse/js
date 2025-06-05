@@ -2,215 +2,137 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const Plugins = require('../models/plugins'); // Your plugins database model
+const { getBuffer } = require('../lib/functions');
 
-// Helper functions
-async function installPlugin(url) {
-    try {
-        const response = await axios.get(url);
-        const pluginName = path.basename(url).replace('.js', '') || `plugin-${Date.now()}`;
-        const pluginPath = path.join(__dirname, '../plugins', `${pluginName}.js`);
-        
-        await fs.promises.writeFile(pluginPath, response.data);
-        require(pluginPath); // Load the plugin
-        
-        // Save to database
-        await Plugins.create({
-            id: pluginName,
-            url: url,
-            installedAt: new Date()
-        });
-        
-        return {
-            status: 200,
-            message: 'Plugin installed successfully!',
-            pluginName: pluginName
-        };
-    } catch (error) {
-        return {
-            status: 500,
-            message: 'Failed to install plugin: ' + error.message
-        };
+cmd({
+  pattern: 'install',
+  alias: ['addplugin'],
+  react: '📥',
+  desc: 'Install plugins from GitHub Gist or raw URLs',
+  category: 'plugin',
+  filename: __filename,
+  use: '<gist_url|raw_url>'
+}, async (conn, mek, m, { reply, args }) => {
+  try {
+    if (!args[0]) return reply('❌ Please provide a plugin URL\n\nExample:\n.install https://gist.github.com/...\n.install https://raw.githubusercontent.com/.../plugin.js');
+
+    const url = args[0];
+    let pluginContent, pluginName;
+
+    // Handle GitHub Gist URLs
+    if (url.includes('gist.github.com')) {
+      const gistId = url.match(/(?:\/|gist\.github\.com\/)([a-fA-F0-9]+)/)?.[1];
+      if (!gistId) return reply('❌ Invalid Gist URL format');
+
+      const gistUrl = `https://api.github.com/gists/${gistId}`;
+      const { data } = await axios.get(gistUrl);
+      
+      if (!data?.files) return reply('❌ No files found in this Gist');
+
+      const firstFile = Object.values(data.files)[0];
+      pluginContent = firstFile.content;
+      pluginName = firstFile.filename;
+    } 
+    // Handle GitHub raw content URLs
+    else if (url.includes('raw.githubusercontent.com')) {
+      pluginName = path.basename(url);
+      const { data } = await axios.get(url);
+      pluginContent = data;
     }
+    // Handle direct JS file URLs
+    else if (url.endsWith('.js')) {
+      pluginName = path.basename(url);
+      const { data } = await axios.get(url);
+      pluginContent = data;
+    } else {
+      return reply('❌ Unsupported URL type. Provide either:\n- GitHub Gist URL\n- GitHub raw content URL\n- Direct JS file URL');
+    }
+
+    // Validate plugin name
+    if (!pluginName.endsWith('.js')) {
+      pluginName += '.js';
+    }
+
+    // Check if plugin exists
+    const pluginPath = path.join(__dirname, '..', 'plugins', pluginName);
+    if (fs.existsSync(pluginPath)) {
+      return reply(`⚠️ Plugin "${pluginName}" already exists!\nUse *.updateplugin ${pluginName}* to update it`);
+    }
+
+    // Save the plugin
+    await fs.promises.writeFile(pluginPath, pluginContent);
+    
+    // Verify the plugin
+    try {
+      const plugin = require(pluginPath);
+      if (plugin?.handler) {
+        reply(`✅ Successfully installed plugin: ${pluginName}\n\nType *.restart* to load the new plugin`);
+      } else {
+        fs.unlinkSync(pluginPath); // Remove invalid plugin
+        reply('❌ Invalid plugin format - missing handler function');
+      }
+    } catch (e) {
+      fs.unlinkSync(pluginPath); // Remove invalid plugin
+      reply(`❌ Plugin installation failed:\n${e.message}`);
+    }
+
+  } catch (error) {
+    console.error('Plugin install error:', error);
+    reply(`❌ Failed to install plugin:\n${error.message}`);
+  }
+});
+
+cmd({
+  pattern: 'updateplugin',
+  alias: ['pluginupdate'],
+  react: '🔄',
+  desc: 'Update existing plugins from source',
+  category: 'plugin',
+  filename: __filename,
+  use: '<plugin_name|all> [url]'
+}, async (conn, mek, m, { reply, args }) => {
+  try {
+    if (!args[0]) return reply('❌ Please provide a plugin name or "all"');
+
+    const pluginName = args[0].toLowerCase();
+    const pluginsDir = path.join(__dirname, '..', 'plugins');
+
+    if (pluginName === 'all') {
+      // Implement batch update logic here
+      return reply('⚠️ Batch updating not implemented yet');
+    }
+
+    // Check if plugin exists
+    const pluginPath = path.join(pluginsDir, pluginName.endsWith('.js') ? pluginName : `${pluginName}.js`);
+    if (!fs.existsSync(pluginPath)) {
+      return reply(`❌ Plugin "${pluginName}" not found`);
+    }
+
+    // Get update URL from command or plugin metadata
+    const updateUrl = args[1] || await getPluginSourceUrl(pluginPath);
+    if (!updateUrl) {
+      return reply(`❌ No update URL provided or found in plugin metadata\nUsage: .updateplugin ${pluginName} <url>`);
+    }
+
+    // Download updated plugin
+    const { data } = await axios.get(updateUrl);
+    await fs.promises.writeFile(pluginPath, data);
+
+    reply(`✅ Successfully updated plugin: ${pluginName}\n\nType *.restart* to reload plugins`);
+
+  } catch (error) {
+    console.error('Plugin update error:', error);
+    reply(`❌ Failed to update plugin:\n${error.message}`);
+  }
+});
+
+// Helper function to extract source URL from plugin comments
+async function getPluginSourceUrl(pluginPath) {
+  try {
+    const content = await fs.promises.readFile(pluginPath, 'utf8');
+    const urlMatch = content.match(/@source (.+)/);
+    return urlMatch ? urlMatch[1] : null;
+  } catch {
+    return null;
+  }
 }
-
-async function deletePlugin(identifier) {
-    try {
-        // Check if identifier is URL or ID
-        let plugin;
-        if (identifier.startsWith('http')) {
-            plugin = await Plugins.findOne({ url: identifier });
-        } else {
-            plugin = await Plugins.findOne({ id: identifier });
-        }
-
-        if (!plugin) {
-            return { status: 404, message: 'Plugin not found' };
-        }
-
-        const pluginPath = path.join(__dirname, '../plugins', `${plugin.id}.js`);
-        
-        // Delete file
-        if (fs.existsSync(pluginPath)) {
-            fs.unlinkSync(pluginPath);
-        }
-        
-        // Remove from database
-        await Plugins.deleteOne({ _id: plugin._id });
-        
-        // Clear from require cache
-        delete require.cache[require.resolve(pluginPath)];
-        
-        return {
-            status: 200,
-            message: 'Plugin deleted successfully!',
-            pluginName: plugin.id
-        };
-    } catch (error) {
-        return {
-            status: 500,
-            message: 'Failed to delete plugin: ' + error.message
-        };
-    }
-}
-/*
-// Install Plugin Commandcmd({
-    pattern: "install",
-    alias: ["addplugin"],
-    desc: "Install external plugins from GitHub raw URLs",
-    category: "core",
-    react: "📥",
-    filename: __filename,
-    use: "<github-raw-url>"
-}, async (conn, mek, m, { args, reply }) => {
-    try {
-        if (!args[0]) return reply("📥 *Please provide a GitHub raw URL*\nExample: .install https://raw.githubusercontent.com/user/repo/main/plugin.js");
-
-        const url = args[0];
-        if (!url.match(/^https:\/\/raw\.githubusercontent\.com\/.+\/.+\.js$/)) {
-            return reply("❌ *Invalid URL* - Must be a GitHub raw JS file URL");
-        }
-
-        await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
-
-        // Check if already installed
-        const existing = await Plugins.findOne({ url: url });
-        if (existing) return reply("⚠️ This plugin is already installed!");
-
-        const result = await installPlugin(url);
-        
-        if (result.status === 200) {
-            await conn.sendMessage(mek.chat, { react: { text: "✅", key: mek.key } });
-            reply(`✨ *Plugin Installed!*\nName: ${result.pluginName}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`);
-        } else {
-            await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
-            reply(`❌ *Install Failed*\n${result.message}`);
-        }
-
-    } catch (error) {
-        console.error('Install error:', error);
-        await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
-        reply('❌ *Error installing plugin* - Please check console');
-    }
-}); */
-cmd({
-    pattern: "install",
-    alias: ["addplugin"],
-    desc: "Install external plugins",
-    category: "core",
-    react: "📥",
-    filename: __filename,
-    use: "<github-raw-url>"
-}, async (conn, mek, m, { args, reply }) => {
-    try {
-        if (!args[0]) return reply("📥 *Please provide a GitHub raw URL*");
-
-        const url = args[0];
-        
-        // Verify URL format
-        if (!/^https:\/\/raw\.githubusercontent\.com\/.+\/.+\.js$/.test(url)) {
-            return reply("❌ *Invalid URL*\nMust be GitHub raw JS file URL");
-        }
-
-        await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
-
-        // Download the plugin
-        const response = await axios.get(url);
-        const pluginName = url.split('/').slice(-1)[0].replace('.js', '') || `plugin-${Date.now()}`;
-        const pluginPath = path.join(__dirname, '../plugins', `${pluginName}.js`);
-        
-        // Save file
-        await fs.promises.writeFile(pluginPath, response.data);
-        
-        // Load plugin
-        require(pluginPath);
-        
-        reply(`✅ *Plugin Installed!*\nName: ${pluginName}\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`);
-        
-    } catch (error) {
-        console.error('Install error:', error);
-        reply(`❌ *Install Failed*\n${error.response?.status === 404 ? 'URL not found' : error.message}`);
-    }
-});
-
-
-// Delete Plugin Command
-cmd({
-    pattern: "delplugin",
-    alias: ["removeplugin", "uninstall"],
-    desc: "Remove installed plugins",
-    category: "core",
-    react: "🗑️",
-    filename: __filename,
-    use: "<plugin-id|url>"
-}, async (conn, mek, m, { args, reply }) => {
-    try {
-        if (!args[0]) return reply("🗑️ *Please provide plugin ID or URL*\nExample: .delplugin myplugin\n.delplugin https://raw.githubusercontent.com/...");
-
-        await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
-
-        const result = await deletePlugin(args[0]);
-        
-        if (result.status === 200) {
-            await conn.sendMessage(mek.chat, { react: { text: "✅", key: mek.key } });
-            reply(`♻️ *Plugin Deleted!*\nName: ${result.pluginName}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`);
-        } else {
-            await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
-            reply(`❌ *Delete Failed*\n${result.message}`);
-        }
-
-    } catch (error) {
-        console.error('Delete error:', error);
-        await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
-        reply('❌ *Error deleting plugin* - Please check console');
-    }
-});
-
-// List Plugins Command
-cmd({
-    pattern: "plugins",
-    alias: ["listplugins"],
-    desc: "List all installed plugins",
-    category: "core",
-    react: "📋",
-    filename: __filename
-}, async (conn, mek, m, { reply }) => {
-    try {
-        const plugins = await Plugins.find({});
-        
-        if (plugins.length === 0) return reply("📭 *No plugins installed*");
-
-        let pluginList = "📦 *Installed Plugins*\n\n";
-        plugins.forEach((plugin, index) => {
-            pluginList += `${index+1}. ${plugin.id}\n   🔗 ${plugin.url}\n   📅 ${plugin.installedAt.toLocaleDateString()}\n\n`;
-        });
-
-        pluginList += `\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`;
-
-        reply(pluginList);
-
-    } catch (error) {
-        console.error('Plugins list error:', error);
-        reply('❌ *Error listing plugins*');
-    }
-});
