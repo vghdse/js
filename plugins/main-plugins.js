@@ -14,7 +14,7 @@ cmd({
   use: '<gist_url|raw_url>'
 }, async (conn, mek, m, { reply, args }) => {
   try {
-    if (!args[0]) return reply('❌ Please provide a plugin URL\n\nExample:\n.install https://gist.github.com/...\n.install https://raw.githubusercontent.com/.../plugin.js');
+    if (!args[0]) return reply(`❌ Please provide a plugin URL\n\nExample:\n*${config.PREFIX}install https://gist.github.com/...*\n*${config.PREFIX}install https://raw.githubusercontent.com/.../plugin.js*`);
 
     const url = args[0];
     let pluginContent, pluginName;
@@ -22,117 +22,71 @@ cmd({
     // Handle GitHub Gist URLs
     if (url.includes('gist.github.com')) {
       const gistId = url.match(/(?:\/|gist\.github\.com\/)([a-fA-F0-9]+)/)?.[1];
-      if (!gistId) return reply('❌ Invalid Gist URL format');
+      if (!gistId) return reply('❌ Invalid Gist URL format. Example: https://gist.github.com/username/gistid');
 
       const gistUrl = `https://api.github.com/gists/${gistId}`;
       const { data } = await axios.get(gistUrl);
       
       if (!data?.files) return reply('❌ No files found in this Gist');
+      if (Object.keys(data.files).length > 1) return reply('⚠️ Gist contains multiple files. Using the first JS file found.');
 
-      const firstFile = Object.values(data.files)[0];
+      const firstFile = Object.values(data.files).find(file => file.filename.endsWith('.js'));
+      if (!firstFile) return reply('❌ No .js files found in this Gist');
+      
       pluginContent = firstFile.content;
       pluginName = firstFile.filename;
     } 
-    // Handle GitHub raw content URLs
-    else if (url.includes('raw.githubusercontent.com')) {
+    // Handle GitHub raw content and direct URLs
+    else {
+      if (!url.endsWith('.js')) return reply('❌ URL must point to a .js file');
+      
       pluginName = path.basename(url);
       const { data } = await axios.get(url);
       pluginContent = data;
-    }
-    // Handle direct JS file URLs
-    else if (url.endsWith('.js')) {
-      pluginName = path.basename(url);
-      const { data } = await axios.get(url);
-      pluginContent = data;
-    } else {
-      return reply('❌ Unsupported URL type. Provide either:\n- GitHub Gist URL\n- GitHub raw content URL\n- Direct JS file URL');
     }
 
     // Validate plugin name
-    if (!pluginName.endsWith('.js')) {
-      pluginName += '.js';
-    }
+    if (!pluginName.endsWith('.js')) pluginName += '.js';
+    if (pluginName.includes(' ')) pluginName = pluginName.replace(/\s+/g, '_');
 
     // Check if plugin exists
     const pluginPath = path.join(__dirname, '..', 'plugins', pluginName);
     if (fs.existsSync(pluginPath)) {
-      return reply(`⚠️ Plugin "${pluginName}" already exists!\nUse *.updateplugin ${pluginName}* to update it`);
+      return reply(`⚠️ Plugin "${pluginName}" already exists!\nUse *${config.PREFIX}updateplugin ${pluginName}* to update it`);
+    }
+
+    // Validate plugin structure before saving
+    if (!isValidPlugin(pluginContent)) {
+      return reply(`❌ Invalid plugin format. Plugins must:\n1. Export a handler function\n2. Include cmd() or similar registration\n3. Not contain malicious code`);
     }
 
     // Save the plugin
     await fs.promises.writeFile(pluginPath, pluginContent);
     
-    // Verify the plugin
-    try {
-      const plugin = require(pluginPath);
-      if (plugin?.handler) {
-        reply(`✅ Successfully installed plugin: ${pluginName}\n\nType *.restart* to load the new plugin`);
-      } else {
-        fs.unlinkSync(pluginPath); // Remove invalid plugin
-        reply('❌ Invalid plugin format - missing handler function');
-      }
-    } catch (e) {
-      fs.unlinkSync(pluginPath); // Remove invalid plugin
-      reply(`❌ Plugin installation failed:\n${e.message}`);
-    }
+    reply(`✅ Successfully installed plugin: ${pluginName}\n\nType *${config.PREFIX}restart* to load the new plugin`);
 
   } catch (error) {
     console.error('Plugin install error:', error);
-    reply(`❌ Failed to install plugin:\n${error.message}`);
+    reply(`❌ Failed to install plugin:\n${error.message}\n\nMake sure:\n1. URL is correct\n2. File is accessible\n3. Content is valid plugin code`);
   }
 });
 
-cmd({
-  pattern: 'updateplugin',
-  alias: ['pluginupdate'],
-  react: '🔄',
-  desc: 'Update existing plugins from source',
-  category: 'plugin',
-  filename: __filename,
-  use: '<plugin_name|all> [url]'
-}, async (conn, mek, m, { reply, args }) => {
+// Improved plugin validation
+function isValidPlugin(content) {
   try {
-    if (!args[0]) return reply('❌ Please provide a plugin name or "all"');
-
-    const pluginName = args[0].toLowerCase();
-    const pluginsDir = path.join(__dirname, '..', 'plugins');
-
-    if (pluginName === 'all') {
-      // Implement batch update logic here
-      return reply('⚠️ Batch updating not implemented yet');
+    // Basic checks
+    if (!content.includes('cmd(') && 
+        !content.includes('handler =') && 
+        !content.includes('export default')) {
+      return false;
     }
 
-    // Check if plugin exists
-    const pluginPath = path.join(pluginsDir, pluginName.endsWith('.js') ? pluginName : `${pluginName}.js`);
-    if (!fs.existsSync(pluginPath)) {
-      return reply(`❌ Plugin "${pluginName}" not found`);
-    }
-
-    // Get update URL from command or plugin metadata
-    const updateUrl = args[1] || await getPluginSourceUrl(pluginPath);
-    if (!updateUrl) {
-      return reply(`❌ No update URL provided or found in plugin metadata\nUsage: .updateplugin ${pluginName} <url>`);
-    }
-
-    // Download updated plugin
-    const { data } = await axios.get(updateUrl);
-    await fs.promises.writeFile(pluginPath, data);
-
-    reply(`✅ Successfully updated plugin: ${pluginName}\n\nType *.restart* to reload plugins`);
-
-  } catch (error) {
-    console.error('Plugin update error:', error);
-    reply(`❌ Failed to update plugin:\n${error.message}`);
-  }
-});
-
-// Helper function to extract source URL from plugin comments
-async function getPluginSourceUrl(pluginPath) {
-  try {
-    const content = await fs.promises.readFile(pluginPath, 'utf8');
-    const urlMatch = content.match(/@source (.+)/);
-    return urlMatch ? urlMatch[1] : null;
+    // Check for required structures
+    const hasHandler = content.includes('handler =') || content.includes('export default');
+    const hasCommand = content.includes('cmd(') || content.includes('handler.command');
+    
+    return hasHandler && hasCommand;
   } catch {
-    return null;
+    return false;
   }
 }
