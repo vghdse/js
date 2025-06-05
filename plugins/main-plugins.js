@@ -2,16 +2,16 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const { getBuffer } = require('../lib/functions');
 
 cmd({
   pattern: 'install',
   alias: ['addplugin'],
   react: '📥',
-  desc: 'Install plugins from GitHub Gist or raw URLs',
+  desc: 'Install SubZero plugins from URLs',
   category: 'plugin',
   filename: __filename,
-  use: '<gist_url|raw_url>'
+  use: '<url>',
+  owner: true
 }, async (conn, mek, m, { reply, args }) => {
   try {
     if (!args[0]) return reply(`❌ Please provide a plugin URL\n\nExample:\n*${config.PREFIX}install https://gist.github.com/...*\n*${config.PREFIX}install https://raw.githubusercontent.com/.../plugin.js*`);
@@ -19,25 +19,20 @@ cmd({
     const url = args[0];
     let pluginContent, pluginName;
 
-    // Handle GitHub Gist URLs
+    // Download the plugin content
     if (url.includes('gist.github.com')) {
+      // Handle GitHub Gists
       const gistId = url.match(/(?:\/|gist\.github\.com\/)([a-fA-F0-9]+)/)?.[1];
-      if (!gistId) return reply('❌ Invalid Gist URL format. Example: https://gist.github.com/username/gistid');
+      if (!gistId) return reply('❌ Invalid Gist URL format');
 
-      const gistUrl = `https://api.github.com/gists/${gistId}`;
-      const { data } = await axios.get(gistUrl);
-      
-      if (!data?.files) return reply('❌ No files found in this Gist');
-      if (Object.keys(data.files).length > 1) return reply('⚠️ Gist contains multiple files. Using the first JS file found.');
-
-      const firstFile = Object.values(data.files).find(file => file.filename.endsWith('.js'));
-      if (!firstFile) return reply('❌ No .js files found in this Gist');
+      const { data } = await axios.get(`https://api.github.com/gists/${gistId}`);
+      const firstFile = Object.values(data.files).find(f => f.filename.endsWith('.js'));
+      if (!firstFile) return reply('❌ No JavaScript file found in Gist');
       
       pluginContent = firstFile.content;
       pluginName = firstFile.filename;
-    } 
-    // Handle GitHub raw content and direct URLs
-    else {
+    } else {
+      // Handle direct URLs
       if (!url.endsWith('.js')) return reply('❌ URL must point to a .js file');
       
       pluginName = path.basename(url);
@@ -47,46 +42,58 @@ cmd({
 
     // Validate plugin name
     if (!pluginName.endsWith('.js')) pluginName += '.js';
-    if (pluginName.includes(' ')) pluginName = pluginName.replace(/\s+/g, '_');
+    pluginName = pluginName.replace(/\s+/g, '_');
 
-    // Check if plugin exists
+    // Validate plugin structure
+    if (!isValidSubzeroPlugin(pluginContent)) {
+      return reply(`❌ Invalid SubZero plugin format. Must contain:\n1. const { cmd } = require()\n2. cmd({...}) pattern\n3. Async handler function`);
+    }
+
+    // Save to plugins directory
     const pluginPath = path.join(__dirname, '..', 'plugins', pluginName);
-    if (fs.existsSync(pluginPath)) {
-      return reply(`⚠️ Plugin "${pluginName}" already exists!\nUse *${config.PREFIX}updateplugin ${pluginName}* to update it`);
-    }
-
-    // Validate plugin structure before saving
-    if (!isValidPlugin(pluginContent)) {
-      return reply(`❌ Invalid plugin format. Plugins must:\n1. Export a handler function\n2. Include cmd() or similar registration\n3. Not contain malicious code`);
-    }
-
-    // Save the plugin
     await fs.promises.writeFile(pluginPath, pluginContent);
     
-    reply(`✅ Successfully installed plugin: ${pluginName}\n\nType *${config.PREFIX}restart* to load the new plugin`);
+    reply(`✅ Plugin *${pluginName}* installed successfully!\n\nUse *${config.PREFIX}restart* to load it`);
 
   } catch (error) {
-    console.error('Plugin install error:', error);
-    reply(`❌ Failed to install plugin:\n${error.message}\n\nMake sure:\n1. URL is correct\n2. File is accessible\n3. Content is valid plugin code`);
+    console.error('Install error:', error);
+    reply(`❌ Failed to install plugin:\n${error.message}`);
   }
 });
 
-// Improved plugin validation
-function isValidPlugin(content) {
-  try {
-    // Basic checks
-    if (!content.includes('cmd(') && 
-        !content.includes('handler =') && 
-        !content.includes('export default')) {
-      return false;
-    }
+// Specialized validator for SubZero plugins
+function isValidSubzeroPlugin(content) {
+  const requiredPatterns = [
+    /const\s*{\s*cmd\s*}\s*=\s*require\(['"]\.\.\/command['"]\)/,
+    /cmd\({[\s\S]*?pattern:\s*["'].+?["']/,
+    /async\s*\(conn,\s*mek,\s*m,\s*{.*?}\)\s*=>\s*{/,
+    /filename:\s*__filename/
+  ];
 
-    // Check for required structures
-    const hasHandler = content.includes('handler =') || content.includes('export default');
-    const hasCommand = content.includes('cmd(') || content.includes('handler.command');
-    
-    return hasHandler && hasCommand;
-  } catch {
-    return false;
-  }
+  return requiredPatterns.every(pattern => pattern.test(content));
 }
+
+cmd({
+  pattern: 'pluginlist',
+  alias: ['listplugins'],
+  desc: 'List installed plugins',
+  category: 'plugin',
+  filename: __filename
+}, async (conn, mek, m, { reply }) => {
+  try {
+    const pluginsDir = path.join(__dirname, '..', 'plugins');
+    const files = fs.readdirSync(pluginsDir).filter(f => f.endsWith('.js'));
+    
+    if (!files.length) return reply('No plugins installed');
+    
+    let msg = '📋 *Installed Plugins*:\n\n';
+    files.forEach((file, i) => {
+      msg += `${i+1}. ${file}\n`;
+    });
+    
+    msg += `\nTotal: ${files.length} plugins`;
+    reply(msg);
+  } catch (error) {
+    reply('❌ Failed to list plugins');
+  }
+});
