@@ -7,7 +7,7 @@ const path = require('path');
 // Plugin Install Command
 cmd({
   pattern: 'install',
-  alias: ['addplugin'],
+  alias: ['addplugin','installplugin'],
   react: '📥',
   desc: 'Install plugins from Gist URLs',
   category: 'plugin',
@@ -38,7 +38,7 @@ cmd({
     // Check if plugin already exists
     const pluginPath = path.join(pluginsDir, jsFile.filename);
     if (fs.existsSync(pluginPath)) {
-      return reply(`⚠️ Plugin *${jsFile.filename}* already exists!\nUse *${config.PREFIX}updateplugin* to update it`);
+      return reply(`⚠️ Plugin *${jsFile.filename}* already exists!\nUse *${config.PREFIX}listplugins* to see plugin list`);
     }
 
     // Save the file
@@ -67,7 +67,7 @@ cmd({
     
     if (!files.length) return reply('No plugins installed');
     
-    let msg = '📋 *Installed Plugins*:\n\n';
+    let msg = '📋 *Subzero Installed Plugins*:\n\n';
     files.forEach((file, i) => {
       msg += `${i+1}. ${file}\n`;
     });
