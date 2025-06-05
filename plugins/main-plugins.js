@@ -55,36 +55,26 @@ cmd({
 // Plugin List Command
 cmd({
   pattern: 'pluginlist',
-  alias: ['listplugins', 'plugins'],
-  react: '📋',
-  desc: 'List all installed plugins',
+  alias: ['listplugins'],
+  react: '️✳️',
+  desc: 'List installed plugins',
   category: 'plugin',
   filename: __filename
 }, async (conn, mek, m, { reply }) => {
   try {
     const pluginsDir = path.join(__dirname, '..', 'plugins');
-    if (!fs.existsSync(pluginsDir)) {
-      return reply('❌ No plugins directory found');
-    }
-
-    const plugins = fs.readdirSync(pluginsDir)
-      .filter(file => file.endsWith('.js'))
-      .sort();
-
-    if (plugins.length === 0) {
-      return reply('ℹ️ No plugins installed');
-    }
-
-    let message = `📚 *Installed Plugins (${plugins.length})*:\n\n`;
-    plugins.forEach((plugin, index) => {
-      message += `${index + 1}. ${plugin}\n`;
+    const files = fs.readdirSync(pluginsDir).filter(f => f.endsWith('.js'));
+    
+    if (!files.length) return reply('No plugins installed');
+    
+    let msg = '📋 *Installed Plugins*:\n\n';
+    files.forEach((file, i) => {
+      msg += `${i+1}. ${file}\n`;
     });
-
-    message += `\nUse *${config.PREFIX}deleteplugin <name>* to remove a plugin`;
-    reply(message);
-
+    
+    msg += `\nTotal: ${files.length} plugins`;
+    reply(msg);
   } catch (error) {
-    console.error('Plugin list error:', error);
     reply('❌ Failed to list plugins');
   }
 });
