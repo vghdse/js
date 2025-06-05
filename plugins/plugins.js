@@ -7,8 +7,8 @@ const config = require('../config');
 let pluginCache = [];
 
 cmd({
-    pattern: "listplugins",
-    alias: ["plugins", "plugs"],
+    pattern: "listplugins2",
+    alias: ["plugins2", "plugs"],
     react: "📂",
     desc: "List all available plugins",
     category: "utility",
@@ -16,7 +16,7 @@ cmd({
 }, async (conn, mek, m, { reply }) => {
     try {
         // Get repo from config or use default
-        const repoUrl = config.REPO || "https://github.com/takudzwa07/SB";
+        const repoUrl = config.REPO || "https://github.com/3strox/x";
         const repoPath = repoUrl.replace('https://github.com/', '');
         const [owner, repo] = repoPath.split('/');
         
