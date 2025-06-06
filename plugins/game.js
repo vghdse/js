@@ -1,4 +1,4 @@
-const fs = require('fs');
+/*const fs = require('fs');
 const path = require('path');
 const { cmd } = require('../command');
 
@@ -378,3 +378,4 @@ Type the command to use it!
 
 // Initialize game database on startup
 initGameDB();
+*/
