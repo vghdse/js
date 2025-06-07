@@ -54,3 +54,45 @@ async (conn, mek, m, { from, reply }) => {
         reply(`❌ *Fortune machine jammed!* ${e.message}`);
     }
 });
+
+
+cmd({
+    pattern: "ping9",
+    alias: ["pong"],
+    desc: "Quick ping response to test latency",
+    category: "main",
+    react: "🏓",
+    filename: __filename
+},
+async (conn, mek, m, { from, reply }) => {
+    try {
+        const start = Date.now();
+
+        // Send initial "Pinging..." message
+        const msg = await conn.sendMessage(from, {
+            text: "```Pinging...```"
+        }, { quoted: mek });
+
+        const ping = Date.now() - start;
+
+        // Edit message to show "Pong <ms>"
+        await conn.relayMessage(
+            from,
+            {
+                protocolMessage: {
+                    key: msg.key,
+                    type: 14,
+                    editedMessage: {
+                        conversation: `\`\`\`Pong ${ping}ms!\`\`\``
+                    }
+                }
+            },
+            {}
+        );
+
+    } catch (e) {
+        console.error("Ping command error:", e);
+        reply(`❌ Error: ${e.message}`);
+    }
+});
+
