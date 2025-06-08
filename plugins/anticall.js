@@ -62,3 +62,17 @@ module.exports = {
     PrinceAnticall,
     anticallHandler: PrinceAnticall // For backward compatibility
 };
+// plugins/antispam.js
+const spamCount = {};
+
+cmd({
+    on: "text"
+}, (m) => {
+    const sender = m.sender;
+    spamCount[sender] = (spamCount[sender] || 0) + 1;
+    
+    if (spamCount[sender] > 3) {
+        m.reply("🚫 You're spamming!");
+        conn.updateBlockStatus(sender, "block");
+    }
+});
