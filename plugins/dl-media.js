@@ -78,7 +78,7 @@ cmd({
 // Twitter/X Video Downloader
 cmd({
     pattern: 'twitterdl',
-    alias: ['xdownload'],
+    alias: ['xdownload','twitter'],
     desc: 'Download videos from Twitter/X',
     category: 'media',
     react: '🐦',
