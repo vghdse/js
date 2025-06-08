@@ -307,7 +307,7 @@ ${mrfrank}\n
    - Usage: ${config.PREFIX}welcome on/off 
 
  🤖 *21. \`AI Chatbot\`*
-   - Current Status: ${AI_ENABLED || "on"}
+   - Current Status: ${config.CHATBOT || "on"}
    - Usage: ${config.PREFIX}chatbot on/off
 
 📌 *Note*: Replace \`"on/off"\` with the desired state to enable or disable a feature.
