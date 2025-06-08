@@ -15,8 +15,8 @@ const axiosInstance = axios.create({
 });
 
 cmd({
-    pattern: 'spotify2',
-    alias: ['spotifydl2', 'spdl3'],
+    pattern: 'fast',
+    alias: ['bolt', 'spdl3'],
     desc: 'Download Spotify tracks (supports URL or search)',
     category: 'media',
     react: '⌛',
