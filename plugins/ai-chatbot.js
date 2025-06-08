@@ -4,7 +4,7 @@ const config = require("../config");
 const { setConfig, getConfig } = require("../lib/configdb");
 
 // Default AI state if not set
-let AI_ENABLED = "true"; // Default enabled
+let AI_ENABLED = "false"; // Default enabled
 
 cmd({
     pattern: "aichat",
