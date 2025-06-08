@@ -20,25 +20,6 @@ const { setConfig, getConfig } = require("../lib/configdb");
 
 
 
-cmd({
-  pattern: "chabot",
-  react: "🤖",
-  desc: "Toggle AI ChatBot feature",
-  category: "settings",
-  filename: __filename,
-}, async (conn, m, { isCreator, args, reply }) => {
-  if (!isCreator) return reply("*📛 Only the owner can toggle ChatBot mode!*");
-
-  const current = getConfig("CHABOT") || "off";
-  const input = args[0]?.toLowerCase();
-
-  if (!["on", "off"].includes(input)) {
-    return reply(`📌 Current CHABOT: *${current.toUpperCase()}*\n\nUsage: *.chabot on* or *.chabot off*`);
-  }
-
-  setConfig("CHABOT", input);
-  return reply(`✅ CHABOT is now *${input.toUpperCase()}*!`);
-});
 
 // SET BOT IMAGE
 cmd({
