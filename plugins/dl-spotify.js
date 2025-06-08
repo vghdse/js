@@ -14,76 +14,166 @@ const axiosInstance = axios.create({
   headers: { 'User-Agent': 'WhatsAppBot/1.0' }
 });
 
+cmd({
+    pattern: 'spotify2',
+    alias: ['spotifydl2', 'spdl3'],
+    desc: 'Download Spotify tracks (supports URL or search)',
+    category: 'media',
+    react: '⌛',
+    use: '<URL or search query>',
+    filename: __filename
+}, async (conn, mek, m, { text, reply }) => {
+    try {
+        if (!text) return reply('🎧 *Usage:* .spotify2 <query/url>\nExample: .spotify2 https://open.spotify.com/track/0lks2Kt9veMOFEAPN0fsqN\n.spotify2 Lily Alan Walker');
+
+        // Safely send reaction
+        try {
+            if (mek?.key?.id) {
+                await conn.sendMessage(mek.chat, { react: { text: "⏳", key: mek.key } });
+            }
+        } catch (reactError) {
+            console.error('Failed to send reaction:', reactError);
+        }
+
+        let trackData, trackUrl;
+        
+        // Check if input is a Spotify URL
+        if (text.match(/open\.spotify\.com\/track\/|spotify:track:/)) {
+            trackUrl = text;
+            const searchData = await fetchAPI('spotify-search', { q: text });
+            trackData = searchData.find(track => track.trackUrl.includes(text.split('/').pop()));
+        } else {
+            // Search functionality
+            const searchData = await fetchAPI('spotify-search', { q: text });
+            if (!searchData || !searchData.length) return reply('🎧 No results found for your search');
+            trackData = searchData[0];
+            trackUrl = trackData.trackUrl;
+        }
+
+        // Get download URL
+        const dlData = await fetchAPI('spotify-down', { url: trackUrl });
+        if (!dlData.url) return reply('🎧 Failed to fetch download link');
+
+        // Get thumbnail
+        let thumbnailBuffer;
+        try {
+            if (trackData.thumbnail) {
+                const response = await axiosInstance.get(trackData.thumbnail, { responseType: 'arraybuffer' });
+                thumbnailBuffer = Buffer.from(response.data, 'binary');
+            }
+        } catch (e) {
+            console.error('Failed to fetch thumbnail:', e);
+        }
+
+        const trackInfo = `🎧 *${trackData.title || 'Unknown Title'}*\n` +
+                        `👤 ${trackData.author || 'Unknown Artist'}\n` +
+                        `⏱ ${trackData.duration || 'N/A'} | 📅 ${trackData.release_date || 'Unknown'}\n\n` +
+                        `🔗 ${trackUrl}\n\n` +
+                        `\`Reply with:\`\n` +
+                        `1 - For Audio Format 🎵\n` +
+                        `2 - For Document Format 📁\n\n` +
+                        `> ${Config.FOOTER}`;
+
+        const sentMsg = await conn.sendMessage(mek.chat, {
+            image: thumbnailBuffer,
+            caption: trackInfo,
+            contextInfo: {
+                externalAdReply: {
+                    title: trackData.title || 'Spotify Track',
+                    body: `Artist: ${trackData.author || 'Unknown'}`,
+                    thumbnail: thumbnailBuffer,
+                    mediaType: 1,
+                    mediaUrl: trackUrl,
+                    sourceUrl: trackUrl
+                }
+            }
+        }, { quoted: mek });
+
+        // Timeout after 60 seconds
+        const timeout = setTimeout(() => {
+            conn.ev.off('messages.upsert', messageListener);
+            reply("⌛ Session timed out. Please use the command again if needed.");
+        }, 60000);
+
+        const messageListener = async (messageUpdate) => {
+            try {
+                const mekInfo = messageUpdate?.messages[0];
+                if (!mekInfo?.message) return;
+
+                const message = mekInfo.message;
+                const messageType = message.conversation || message.extendedTextMessage?.text;
+                const isReplyToSentMsg = message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
+
+                if (!isReplyToSentMsg || !['1', '2'].includes(messageType?.trim())) return;
+
+                // Remove listener and timeout
+                conn.ev.off('messages.upsert', messageListener);
+                clearTimeout(timeout);
+
+                const processingMsg = await reply("⏳ Processing your request...");
+                
+                const audioResponse = await axiosInstance.get(dlData.url, {
+                    responseType: 'arraybuffer'
+                });
+                const audioBuffer = Buffer.from(audioResponse.data, 'binary');
+
+                const fileName = `${trackData.title || 'spotify_track'}.mp3`.replace(/[<>:"\/\\|?*]+/g, '');
+
+                if (messageType.trim() === "1") {
+                    await conn.sendMessage(mek.chat, {
+                        audio: audioBuffer,
+                        mimetype: 'audio/mpeg',
+                        fileName: fileName,
+                        ptt: false
+                    }, { quoted: mek });
+                } else {
+                    await conn.sendMessage(mek.chat, {
+                        document: audioBuffer,
+                        mimetype: 'audio/mpeg',
+                        fileName: fileName
+                    }, { quoted: mek });
+                }
+
+                try {
+                    if (mekInfo?.key?.id) {
+                        await conn.sendMessage(mek.chat, { react: { text: "✅", key: mekInfo.key } });
+                    }
+                } catch (reactError) {
+                    console.error('Failed to send success reaction:', reactError);
+                }
+
+            } catch (error) {
+                console.error('Error in listener:', error);
+                await reply('🎧 Error processing your request: ' + (error.message || 'Please try again'));
+                
+                try {
+                    if (mek?.key?.id) {
+                        await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
+                    }
+                } catch (reactError) {
+                    console.error('Failed to send error reaction:', reactError);
+                }
+            }
+        };
+
+        conn.ev.on('messages.upsert', messageListener);
+
+    } catch (error) {
+        console.error('Error:', error);
+        try {
+            if (mek?.key?.id) {
+                await conn.sendMessage(mek.chat, { react: { text: "❌", key: mek.key } });
+            }
+        } catch (reactError) {
+            console.error('Failed to send error reaction:', reactError);
+        }
+        reply('🎧 Error: ' + (error.message || 'Please try again later'));
+    }
+});
+
 // Helper function for API requests
 async function fetchAPI(endpoint, params) {
   const url = `${API.baseUrl}/${endpoint}?${new URLSearchParams(params)}&apikey=${API.apikey}`;
   const response = await axiosInstance.get(url);
   return response.data;
 }
-
-cmd({
-    pattern: 'spotify2',
-    alias: ['spotifydl2', 'spdl3'],
-    desc: 'Download Spotify tracks (supports URL or search)',
-    category: 'media',
-    react: '🎧',
-    use: '<URL or search query>',
-    filename: __filename
-}, async (conn, mek, m, { text, reply }) => {
-    try {
-        if (!text) return reply('🎧 *Usage:* .spotify <URL or search query>\nExample:\n.spotify https://open.spotify.com/track/0lks2Kt9veMOFEAPN0fsqN\n.spotify Lily Alan Walker');
-
-        // Check if input is a Spotify URL
-        const isUrl = text.match(/open\.spotify\.com\/track\/|spotify:track:/);
-        
-        if (isUrl) {
-            // Direct URL download
-            const data = await fetchAPI('spotify-down', { url: text });
-            
-            await conn.sendMessage(m.chat, {
-                audio: { url: data.url },
-                mimetype: 'audio/mpeg',
-                fileName: `${data.title}.mp3`.replace(/[<>:"\/\\|?*]+/g, ''),
-                caption: `🎧 *${data.title}*\n👤 ${data.artist}\n\n> ${Config.FOOTER}`
-            }, { quoted: mek });
-            
-        } else {
-            // Search functionality - automatically download top result
-            const searchData = await fetchAPI('spotify-search', { q: text });
-            
-            if (!searchData || !searchData.length) {
-                return reply('❌ No results found for your search');
-            }
-
-            // Get top result
-            const topResult = searchData[0];
-            
-            // Show searching message
-            await reply(`⏳ Downloading *${topResult.title}*...`);
-
-            // Download the track
-            const dlData = await fetchAPI('spotify-down', { url: topResult.trackUrl });
-            
-            await conn.sendMessage(m.chat, {
-                audio: { url: dlData.url },
-                mimetype: 'audio/mpeg',
-                fileName: `${dlData.title}.mp3`.replace(/[<>:"\/\\|?*]+/g, ''),
-                caption: `🎧 *${dlData.title}*\n👤 ${dlData.artist}\n⏱ ${topResult.duration} | 📅 ${topResult.release_date}\n\n> ${Config.FOOTER}`
-            }, { quoted: mek });
-
-            // Show additional search results for reference
-        /*    if (searchData.length > 1) {
-                let otherResults = '\n🔎 *Other Results:*\n';
-                searchData.slice(1, 4).forEach((track, index) => {
-                    otherResults += `${index + 2}. *${track.title}* - ${track.author}\n`;
-                });
-                otherResults += `\nUse exact URL for specific tracks\n> ${Config.FOOTER}`;
-                await reply(otherResults);
-            }
-        }
-        */
-    } catch (error) {
-        console.error('Spotify command error:', error);
-        reply('❌ Error: ' + (error.message || 'Failed to process your request'));
-    }
-});
