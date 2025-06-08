@@ -8,11 +8,11 @@ let AI_ENABLED = "true"; // Default enabled
 
 cmd({
     pattern: "aichat",
-    alias: ["cbatbot", "bot"],
+    alias: ["chatbot", "subzerobot"],
     desc: "Enable or disable AI chatbot responses",
     category: "settings",
     filename: __filename,
-    react: "🤖"
+    react: "✅"
 }, async (conn, mek, m, { from, args, isOwner, reply }) => {
     if (!isOwner) return reply("*📛 Only the owner can use this command!*");
 
