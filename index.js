@@ -1,5 +1,6 @@
 const axios = require('axios')
 const config = require('./config')
+const { setConfig, getConfig } = require("../lib/configdb");
 const {
   default: makeWASocket,
     useMultiFileAuthState,
@@ -305,6 +306,9 @@ ${mrfrank}\n
    - Current Status: ${config.WELCOME_GOODBYE || "off"}
    - Usage: ${config.PREFIX}welcome on/off 
 
+ 🤖 *21. \`AI Chatbot\`*
+   - Current Status: ${AI_ENABLED || "on"}
+   - Usage: ${config.PREFIX}chatbot on/off
 
 📌 *Note*: Replace \`"on/off"\` with the desired state to enable or disable a feature.
                     `;
