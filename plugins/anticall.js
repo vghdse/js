@@ -1,42 +1,64 @@
 const { cmd } = require('../command');
 const config = require('../config');
 
-let ANTICALL_ENABLED = "true"; // Default: Enabled
+// Default values if not set in config
+config.ANTICALL = config.ANTICALL || "true"; // true/block/false
+config.ANTICALL_MSG = config.ANTICALL_MSG || "📵 Calls are not allowed with this bot!";
+
+const PrinceAnticall = async (json, conn) => {
+   for (const id of json) {
+      if (id.status === 'offer') {
+         if (config.ANTICALL === "true") {
+            let msg = await conn.sendMessage(id.from, {
+               text: `${config.ANTICALL_MSG}`,
+               mentions: [id.from],
+            });
+            await conn.rejectCall(id.id, id.from);
+         } else if (config.ANTICALL === "block") {
+            let msg = await conn.sendMessage(id.from, {
+               text: `${config.ANTICALL_MSG}\nYou are Being Blocked due to Calling While Anticall is Active!`,
+               mentions: [id.from],
+            });
+            await conn.rejectCall(id.id, id.from); 
+            await conn.updateBlockStatus(id.from, "block");
+         }
+      }
+   }
+};
 
 cmd({
     pattern: "anticall",
-    alias: ["blockcall"],
-    desc: "Enable/disable auto-rejecting phone calls",
+    alias: ["callblock"],
+    desc: "Configure call rejection settings",
     category: "security",
     filename: __filename,
     react: "📵"
-}, async (m, conn, { isOwner, reply }) => {
-    if (!isOwner) return reply("❌ *Owner-only command!*");
+}, async (m, conn, { args, isOwner, reply }) => {
+    if (!isOwner) return reply("❌ Owner-only command!");
 
-    const action = m.args[0]?.toLowerCase();
-    if (action === "on") {
-        ANTICALL_ENABLED = "true";
-        reply("📵 *Anti-Call Enabled* - All calls will be rejected.");
-    } else if (action === "off") {
-        ANTICALL_ENABLED = "false";
-        reply("📵 *Anti-Call Disabled* - Calls will be allowed.");
+    const action = args[0]?.toLowerCase();
+    const validModes = ["off", "true", "block"];
+    
+    if (validModes.includes(action)) {
+        config.ANTICALL = action;
+        reply(`📵 AntiCall Mode: ${action.toUpperCase()}\n${action === "block" ? "⚠️ Callers will be BLOCKED" : ""}`);
+    } else if (args[0] === "msg") {
+        config.ANTICALL_MSG = args.slice(1).join(" ");
+        reply(`📵 New rejection message set:\n${config.ANTICALL_MSG}`);
     } else {
-        reply(`📵 *Anti-Call Status*: ${ANTICALL_ENABLED === "true" ? "ON" : "OFF"}\nUsage: *${config.PREFIX}anticall on/off*`);
-    }
-});
+        reply(`📵 *AntiCall Settings*\n
+Current Mode: ${config.ANTICALL.toUpperCase()}
+Message: ${config.ANTICALL_MSG}
 
-// Call rejection handler
-cmd({
-    on: "call"
-}, async (m, conn) => {
-    if (ANTICALL_ENABLED === "true") {
-        await conn.sendMessage(m.sender, { 
-            text: "📵 *Call Rejected!*\nThis bot does not accept calls." 
-        });
-        await conn.rejectCall(m.id);
+Usage:
+→ ${config.PREFIX}anticall true (reject calls)
+→ ${config.PREFIX}anticall block (reject+block)
+→ ${config.PREFIX}anticall off (disable)
+→ ${config.PREFIX}anticall msg [message]`);
     }
 });
 
 module.exports = {
-    ANTICALL_ENABLED
+    PrinceAnticall,
+    anticallHandler: PrinceAnticall // For backward compatibility
 };
