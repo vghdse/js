@@ -19,6 +19,30 @@ const FormData = require('form-data');
 const { setConfig, getConfig } = require("../lib/configdb");
 
 
+cmd({
+  pattern: "chatbot",
+  react: "🤖",
+  desc: "Toggle the AI chatbot on or off",
+  category: "settings",
+  filename: __filename,
+}, async (conn, m, { args, isCreator, reply }) => {
+  if (!isCreator) return reply("📛 Only the owner can use this command!");
+
+  const current = getConfig("CHATBOT") || "off";
+
+  if (!args[0]) {
+    return reply(`🤖 Current AI Bot Status: *${current.toUpperCase()}*\n\nUsage:\n.chatbot on\n.aibot off`);
+  }
+
+  const choice = args[0].toLowerCase();
+
+  if (["on", "off"].includes(choice)) {
+    setConfig("CHATBOT", choice);
+    return reply(`✅ AI Chatbot is now *${choice.toUpperCase()}*`);
+  } else {
+    return reply("❌ Invalid option. Use `.aibot on` or `.aibot off`");
+  }
+});
 
 // SET BOT IMAGE
 cmd({
