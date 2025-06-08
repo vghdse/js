@@ -1,26 +1,4 @@
-const { cmd } = require('../command');
-const axios = require("axios");
-const config = require("../config");
-const { getConfig } = require("../lib/configdb");
 
-cmd({ on: "body" }, async (conn, m, store, { body, sender, isGroup, isBot, reply }) => {
-  try {
-    if (isBot || !body) return;
-
-    const isEnabled = getConfig("CHABOT") || config.CHABOT;
-    if (isEnabled !== "on") return;
-
-    const apiUrl = `https://bk9.fun/ai/BK93?BK9=you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enegmatic about him&q=${encodeURIComponent(body)}`;
-
-    const res = await axios.get(apiUrl);
-    if (res.data && res.data.status && res.data.BK9) {
-      await reply(res.data.BK9);
-    }
-
-  } catch (err) {
-    console.error("Chabot error:", err);
-  }
-});
 /*const axios = require('axios');
 const { cmd } = require('../command');
 const config = require("../config");
@@ -62,7 +40,7 @@ cmd({
   }
 });
 
-
+*/
 const axios = require('axios');
 const { cmd } = require('../command');
 const config = require("../config");
@@ -85,7 +63,7 @@ cmd({
 
     // Encode message for the query
     const query = encodeURIComponent(body);
-    const prompt = encodeURIComponent("you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enigmatic about personal stuff about him. He is 17 years (2025).");
+    const prompt = encodeURIComponent("you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enigmatic about personal stuff about him. He is 17 years (2025).Every mesaage you reply put footer \n> Powered By Mr Frank");
 
     // BK9 API Request
     const apiUrl = `https://bk9.fun/ai/BK93?BK9=${prompt}&q=${query}`;
@@ -105,4 +83,4 @@ cmd({
     reply("❌ An error occurred while contacting the AI.");
   }
 });
-*/
+
