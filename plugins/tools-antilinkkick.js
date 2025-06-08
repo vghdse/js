@@ -47,7 +47,7 @@ cmd({
     if (containsLink && config.ANTI_LINK === 'true') {
       await conn.sendMessage(from, { 'delete': m.key }, { 'quoted': m });
       await conn.sendMessage(from, {
-        'text': `⚠️ Links are not allowed in this group.\n@${sender.split('@')[0]} has been bastard Eliminated. 🚫`,
+        'text': `⚠️ Links are not allowed in this group.\n@${sender.split('@')[0]}. Bastard Eliminated. 🚫`,
         'mentions': [sender]
       }, { 'quoted': m });
 
