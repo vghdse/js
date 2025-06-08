@@ -59,7 +59,7 @@ cmd({
             const topResult = searchData[0];
             
             // Show searching message
-            await reply(`🔍 Found: *${topResult.title}* - ${topResult.author}\n⏳ Downloading...`);
+            await reply(`⏳ Downloading *${topResult.title}*...`);
 
             // Download the track
             const dlData = await fetchAPI('spotify-down', { url: topResult.trackUrl });
@@ -72,7 +72,7 @@ cmd({
             }, { quoted: mek });
 
             // Show additional search results for reference
-            if (searchData.length > 1) {
+        /*    if (searchData.length > 1) {
                 let otherResults = '\n🔎 *Other Results:*\n';
                 searchData.slice(1, 4).forEach((track, index) => {
                     otherResults += `${index + 2}. *${track.title}* - ${track.author}\n`;
@@ -81,7 +81,7 @@ cmd({
                 await reply(otherResults);
             }
         }
-        
+        */
     } catch (error) {
         console.error('Spotify command error:', error);
         reply('❌ Error: ' + (error.message || 'Failed to process your request'));
