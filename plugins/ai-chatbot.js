@@ -1,4 +1,4 @@
-const axios = require('axios');
+/*const axios = require('axios');
 const { cmd } = require('../command');
 const config = require("../config");
 
@@ -36,5 +36,49 @@ cmd({
   } catch (err) {
     console.error("AI Chatbot Error:", err.message);
     reply("❌ Failed to get a response from AI.");
+  }
+});
+*/
+
+const axios = require('axios');
+const { cmd } = require('../command');
+const config = require("../config");
+
+// AI Chatbot - Subzero MD by Darrell Mucheri
+cmd({
+  on: "body"
+}, async (conn, m, store, {
+  from,
+  body,
+  sender,
+  isGroup,
+  isBotAdmins,
+  isAdmins,
+  reply
+}) => {
+  try {
+    // Optional: Prevent bot responding to its own messages or commands
+    if (!body || m.key.fromMe || body.startsWith("!")) return;
+
+    // Encode message for the query
+    const query = encodeURIComponent(body);
+    const prompt = encodeURIComponent("you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enigmatic about personal stuff about him. He is 17 years (2025).");
+
+    // BK9 API Request
+    const apiUrl = `https://bk9.fun/ai/BK93?BK9=${prompt}&q=${query}`;
+
+    const { data } = await axios.get(apiUrl);
+
+    if (data && data.status && data.BK9) {
+      await conn.sendMessage(from, {
+        text: data.BK9
+      }, { quoted: m });
+    } else {
+      reply("⚠️ Subzero AI failed to generate a response.");
+    }
+
+  } catch (err) {
+    console.error("AI Chatbot Error:", err.message);
+    reply("❌ An error occurred while contacting the AI.");
   }
 });
