@@ -1,46 +1,26 @@
-const axios = require('axios');
 const { cmd } = require('../command');
+const axios = require("axios");
 const config = require("../config");
 const { getConfig } = require("../lib/configdb");
 
-cmd({
-  on: "body"
-}, async (conn, m, store, {
-  from,
-  body,
-  sender,
-  isGroup,
-  reply
-}) => {
+cmd({ on: "body" }, async (conn, m, store, { body, sender, isGroup, isBot, reply }) => {
   try {
-    // Ignore empty, commands, or bot’s own messages
-    if (!body || body.startsWith("!") || m.key.fromMe) return;
+    if (isBot || !body) return;
 
-    // Check if AI Chatbot is enabled
-    const aiEnabled = getConfig("CHATBOT") === "on";
-    if (!aiEnabled) return;
+    const isEnabled = getConfig("CHABOT") || config.CHABOT;
+    if (isEnabled !== "on") return;
 
-    // Prepare API query
-    const query = encodeURIComponent(body);
-    const prompt = encodeURIComponent("you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enigmatic about him");
-    const apiUrl = `https://bk9.fun/ai/BK93?BK9=${prompt}&q=${query}`;
+    const apiUrl = `https://bk9.fun/ai/BK93?BK9=you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enegmatic about him&q=${encodeURIComponent(body)}`;
 
-    const { data } = await axios.get(apiUrl);
-
-    if (data && data.status && data.BK9) {
-      await conn.sendMessage(from, {
-        text: data.BK9
-      }, { quoted: m });
-    } else {
-      reply("⚠️ Subzero  AI could not generate a response.");
+    const res = await axios.get(apiUrl);
+    if (res.data && res.data.status && res.data.BK9) {
+      await reply(res.data.BK9);
     }
 
   } catch (err) {
-    console.error("AI Chatbot Error:", err.message);
-    reply("❌ Error occurred while contacting Subzero AI.");
+    console.error("Chabot error:", err);
   }
 });
-
 /*const axios = require('axios');
 const { cmd } = require('../command');
 const config = require("../config");
