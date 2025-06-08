@@ -83,7 +83,9 @@ ${readMore}
 *┋* *⬡ ${config.PREFIX}ᴍᴏᴠɪᴇ*
 *┋* *⬡ ${config.PREFIX}ғᴀᴄᴇʙᴏᴏᴋ*
 *┋* *⬡ ${config.PREFIX}ɪɴꜱᴛᴀɢʀᴀᴍ*
-*┋* *⬡ ${config.PREFIX}sᴘᴏᴛɪғʏ*
+*┋* *⬡ ${config.PREFIX}sᴘᴏᴛɪғʏᴅᴏᴡɴʟᴏᴀᴅ*
+*┋* *⬡ ${config.PREFIX}sᴏᴜɴᴅᴄʟᴏᴜᴅᴅʟ*
+*┋* *⬡ ${config.PREFIX}sɴᴀᴘᴄʜᴀᴛᴅʟ*
 *┋* *⬡ ${config.PREFIX}ᴠɪᴅᴇᴏ*
 *┋* *⬡ ${config.PREFIX}ɢᴅʀɪᴠᴇ*
 *┋* *⬡ ${config.PREFIX}ᴛᴡɪᴛᴛᴇʀ*
@@ -110,6 +112,10 @@ ${readMore}
 *🔎 \`SEARCH-CMD\` 🔍* 
 
 ╭─────────────···◈
+*┋* *⬡ ${config.PREFIX}sᴘᴏᴛɪғʏ*
+*┋* *⬡ ${config.PREFIX}ʀᴇᴄɪᴘᴇ*
+*┋* *⬡ ${config.PREFIX}sᴏᴜɴᴅᴄʟᴏᴜᴅ*
+*┋* *⬡ ${config.PREFIX}ᴀᴘᴘʟᴇᴍᴜsɪᴄ*
 *┋* *⬡ ${config.PREFIX}ɪᴍᴅʙ*
 *┋* *⬡ ${config.PREFIX}ᴡᴇᴇʙ*
 *┋* *⬡ ${config.PREFIX}ᴍᴀʟ*
@@ -187,6 +193,7 @@ ${readMore}
 *┋* *⬡ sᴇᴛᴏᴡɴᴇʀɴᴀᴍᴇ*
 *┋* *⬡ sᴇᴛʙᴏᴛɪᴍᴀɢᴇ* <ᴜʀʟ>
 *┋* *⬡ ${config.PREFIX}ᴘᴍʙʟᴏᴄᴋᴇʀ*
+*┋* *⬡ ${config.PREFIX}ᴀᴅᴅᴏᴡɴᴇʀ*
 *┋* *⬡ ${config.PREFIX}ᴀᴅᴅsᴜᴅᴏ*
 *┋* *⬡ ${config.PREFIX}ᴅᴇʟsᴜᴅᴏ*
 *┋* *⬡ ${config.PREFIX}ʟɪsᴛsᴜᴅᴏ*
@@ -363,6 +370,8 @@ ${readMore}
 *┋* *⬡ ${config.PREFIX}ᴀʟɪᴠᴇ*
 *┋* *⬡ ${config.PREFIX}sᴇssɪᴏɴs*
 *┋* *⬡ ${config.PREFIX}ʀᴇᴘᴏᴛʀᴇᴇ*
+*┋* *⬡ ${config.PREFIX}ɪɴsᴛᴀʟʟᴘʟᴜɢɪɴ*
+*┋* *⬡ ${config.PREFIX}ᴅᴇʟᴇᴛᴇᴘʟᴜɢɪɴ*
 *┋* *⬡ ${config.PREFIX}ʟɪsᴛᴘʟᴜɢɪɴs*
 *┋* *⬡ ${config.PREFIX}ᴘʟᴜɢɪɴᴅʟ*
 ╰─────────────╶╶···◈*
