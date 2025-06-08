@@ -19,29 +19,28 @@ const FormData = require('form-data');
 const { setConfig, getConfig } = require("../lib/configdb");
 
 
+const { cmd } = require('../command');
+const { setConfig, getConfig } = require('../lib/configdb');
+const config = require('../config');
+
 cmd({
-  pattern: "chatbot",
+  pattern: "chabot",
   react: "🤖",
-  desc: "Toggle the AI chatbot on or off",
+  desc: "Toggle AI ChatBot feature",
   category: "settings",
   filename: __filename,
-}, async (conn, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("📛 Only the owner can use this command!");
+}, async (conn, m, { isCreator, args, reply }) => {
+  if (!isCreator) return reply("*📛 Only the owner can toggle ChatBot mode!*");
 
-  const current = getConfig("CHATBOT") || "off";
+  const current = getConfig("CHABOT") || "off";
+  const input = args[0]?.toLowerCase();
 
-  if (!args[0]) {
-    return reply(`🤖 Current AI Bot Status: *${current.toUpperCase()}*\n\nUsage:\n.chatbot on\n.aibot off`);
+  if (!["on", "off"].includes(input)) {
+    return reply(`📌 Current CHABOT: *${current.toUpperCase()}*\n\nUsage: *.chabot on* or *.chabot off*`);
   }
 
-  const choice = args[0].toLowerCase();
-
-  if (["on", "off"].includes(choice)) {
-    setConfig("CHATBOT", choice);
-    return reply(`✅ AI Chatbot is now *${choice.toUpperCase()}*`);
-  } else {
-    return reply("❌ Invalid option. Use `.aibot on` or `.aibot off`");
-  }
+  setConfig("CHABOT", input);
+  return reply(`✅ CHABOT is now *${input.toUpperCase()}*!`);
 });
 
 // SET BOT IMAGE
