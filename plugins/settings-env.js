@@ -19,9 +19,6 @@ const FormData = require('form-data');
 const { setConfig, getConfig } = require("../lib/configdb");
 
 
-const { cmd } = require('../command');
-const { setConfig, getConfig } = require('../lib/configdb');
-const config = require('../config');
 
 cmd({
   pattern: "chabot",
