@@ -23,7 +23,7 @@ async function fetchAPI(endpoint, params) {
 
 // YouTube Audio Downloader (play2)
 cmd({
-    pattern: 'playy2',
+    pattern: 'play2',
     desc: 'Download audio from YouTube (API v1)',
     category: 'media',
     react: '🎵',
@@ -111,7 +111,7 @@ cmd({
 // SoundCloud Search
 cmd({
     pattern: 'soundcloudsearch',
-    alias: ['scsearch'],
+    alias: ['scsearch','soundcloud'],
     desc: 'Search SoundCloud tracks',
     category: 'media',
     react: '🎶',
@@ -174,7 +174,7 @@ cmd({
 // Spotify Search
 cmd({
     pattern: 'spotifysearch',
-    alias: ['spsearch'],
+    alias: ['spsearch','spotify'],
     desc: 'Search Spotify tracks',
     category: 'media',
     react: '🎧',
@@ -192,7 +192,7 @@ cmd({
 
         let resultText = '🎧 *Spotify Results*\n\n';
         data.slice(0, 5).forEach((track, i) => {
-            resultText += `${i+1}. *${track.title}* - ${track.author}\n`;
+            resultText += `${i+1}. *${track.title}* \n`;
             resultText += `   ⏱ ${track.duration} | 📅 ${track.release_date}\n`;
             resultText += `   🔗 ${track.trackUrl}\n\n`;
         });
@@ -210,7 +210,7 @@ cmd({
 // Spotify Downloader
 cmd({
     pattern: 'spotifydl',
-    alias: ['spdl','spotify'],
+    alias: ['spdl','spotifydownload'],
     desc: 'Download Spotify tracks',
     category: 'media',
     react: '🎧',
