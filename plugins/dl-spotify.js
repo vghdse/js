@@ -66,7 +66,7 @@ cmd({
         }
 
         const trackInfo = `🎧 *${trackData.title || 'Unknown Title'}*\n` +
-                        `👤 ${trackData.author || 'Unknown Artist'}\n` +
+                        `👤 Mr Frank || 'Unknown Artist'}\n` +
                         `⏱ ${trackData.duration || 'N/A'} | 📅 ${trackData.release_date || 'Unknown'}\n\n` +
                         `🔗 ${trackUrl}\n\n` +
                         `\`Reply with:\`\n` +
@@ -80,7 +80,7 @@ cmd({
             contextInfo: {
                 externalAdReply: {
                     title: trackData.title || 'Spotify Track',
-                    body: `Artist: ${trackData.author || 'Unknown'}`,
+                    body: `Artist: Mr Frank || 'Unknown'}`,
                     thumbnail: thumbnailBuffer,
                     mediaType: 1,
                     mediaUrl: trackUrl,
