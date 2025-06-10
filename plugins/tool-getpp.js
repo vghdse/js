@@ -8,7 +8,7 @@ const config = require('../config');
 
 
 cmd({
-    pattern: "getpp",
+    pattern: "getpp2",
     react: "🖼️",
     desc: "Sends the profile picture of a user by phone number (owner only)",
     category: "owner",
