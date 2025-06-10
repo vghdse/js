@@ -37,8 +37,7 @@ participant: `0@s.whatsapp.net`, ...(from ? { remoteJid: "status@broadcast" } : 
 }
 
     
-let des = `*👋 Hello ${pushname}*
-`
+let des = `*👋 Hello ${pushname}*`
 return await conn.sendMessage(from,{
     image: {url: `https://ibb.co/exsampel.jpg`},
     caption: des
