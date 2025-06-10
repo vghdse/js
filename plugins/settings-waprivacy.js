@@ -171,7 +171,7 @@ async (conn, mek, m, { from, l, quoted, body, isCmd, command, args, q, isGroup, 
         return reply(`*An error occurred while processing your request.*\n\n_Error:_ ${e.message}`);
     }
 });
-
+/*
 cmd({
     pattern: "setpp",
     alias: "setdp",
@@ -201,7 +201,7 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
         reply(`❌ Error updating profile picture: ${error.message}`);
     }
 });
-
+*/
 cmd({
     pattern: "setmyname",
     alias: "setname",
@@ -312,7 +312,7 @@ async (conn, mek, m, { from, l, quoted, body, isCmd, command, args, q, isGroup, 
         l(e);
     }
 });
-cmd({
+/*cmd({
     pattern: "getpp",
     react: "📋",
     desc: "Fetch the profile picture of a tagged or replied user.",
@@ -340,3 +340,4 @@ cmd({
         reply("❌ An error occurred while fetching the profile picture. Please try again later.");
     }
 });
+*/
