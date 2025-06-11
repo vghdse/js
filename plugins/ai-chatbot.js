@@ -1,4 +1,4 @@
-const axios = require('axios');
+/*const axios = require('axios');
 const { cmd, commands } = require('../command');
 const config = require("../config");
 const { setConfig, getConfig } = require("../lib/configdb");
@@ -108,8 +108,8 @@ cmd({
     }
 });
 
-
-/*const axios = require('axios');
+*/
+const axios = require('axios');
 const { cmd, commands } = require('../command');
 const config = require("../config");
 const { setConfig, getConfig } = require("../lib/configdb");
@@ -189,7 +189,6 @@ cmd({
     }
 });
 
-*/
 
 
 
