@@ -163,3 +163,88 @@ function formatBytes(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+
+cmd({
+  'pattern': "docanalyze",
+  'alias': ["analyzedoc", "docai", "askdoc"],
+  'react': '📄',
+  'desc': "Analyze documents (PDF, Word, etc) with AI",
+  'category': "utility",
+  'use': ".docanalyze [question] [reply to document]",
+  'filename': __filename
+}, async (client, message, args, { reply }) => {
+  try {
+    // Check if quoted message exists and has document
+    const quotedMsg = message.quoted ? message.quoted : message;
+    const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+    
+    if (!mimeType || !(
+      mimeType.includes('pdf') || 
+      mimeType.includes('word') || 
+      mimeType.includes('document') ||
+      mimeType.includes('msword') ||
+      mimeType.includes('vnd.openxmlformats-officedocument')
+    )) {
+      throw "Please reply to a PDF, Word, or other document file";
+    }
+
+    // Get question from arguments
+    const question = args.join(' ') || "Summarize this document";
+    
+    // Download the document
+    const docBuffer = await quotedMsg.download();
+    const tempFilePath = path.join(os.tmpdir(), `doc_upload_${Date.now()}`);
+    fs.writeFileSync(tempFilePath, docBuffer);
+
+    // Get file extension based on mime type
+    let extension = '';
+    if (mimeType.includes('pdf')) extension = '.pdf';
+    else if (mimeType.includes('word') || mimeType.includes('msword')) extension = '.doc';
+    else if (mimeType.includes('vnd.openxmlformats-officedocument')) extension = '.docx';
+    
+    const fileName = `document${extension}`;
+
+    // Prepare form data for Catbox
+    const form = new FormData();
+    form.append('fileToUpload', fs.createReadStream(tempFilePath), fileName);
+    form.append('reqtype', 'fileupload');
+
+    // Upload to Catbox
+    const uploadResponse = await axios.post("https://catbox.moe/user/api.php", form, {
+      headers: form.getHeaders()
+    });
+
+    if (!uploadResponse.data) {
+      throw "Error uploading document to Catbox";
+    }
+
+    const docUrl = uploadResponse.data;
+    fs.unlinkSync(tempFilePath);
+
+    // Analyze with GeminiDocs API
+    const encodedQuestion = encodeURIComponent(question);
+    const encodedUrl = encodeURIComponent(docUrl);
+    const apiUrl = `https://bk9.fun/ai/GeminiDocs?q=${encodedQuestion}&url=${encodedUrl}`;
+
+    const analysisResponse = await axios.get(apiUrl);
+    const result = analysisResponse.data;
+
+    if (!result.status) {
+      throw "Error analyzing document";
+    }
+
+    // Send response
+    await reply(
+      `*📄 Document Analysis Results*\n\n` +
+      `*❓ Question:* ${question}\n` +
+      `*📁 Document URL:* ${docUrl}\n\n` +
+      `*📝 Response:*\n${result.BK9 || result.response || "No content found"}\n\n` +
+      `> © Powered by Subzero & GeminiDocs`
+    );
+
+  } catch (error) {
+    console.error(error);
+    await reply(`Error: ${error.message || error}`);
+  }
+});
+
