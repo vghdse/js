@@ -1,9 +1,8 @@
-//plugin by chathura Hansaka..... ❄️🪄
+//plugin by mr frank..... ❄️🪄
 
 //Don't remove credit.. 🪄
 // https://whatsapp.com/channel/0029Vb6HQGHAojYtcbJg5z1Z
 
-//  ⏤͟͟͞͞ ✰ 𝐷ͯ▲𝑹̸ 𝐾 - 𝑻 𝑬̸ 𝑪̶⃔ 𝐻 - 𝒁̶ 𝚯ͭ ̸𝑵 𝑬 ⚡ᵀᴹ ヤ https://whatsapp.com/channel/0029Vb8yaU3LSmbjWoxfiW0k
 
 const { cmd } = require("../command");
 const yts = require("yt-search");
@@ -182,7 +181,7 @@ async function searchYouTube(query, maxResults = 1) {
 
 cmd(
   {
-    pattern: "video4",
+    pattern: "video",
     alias: ["ytvideo4", "mp4", "ytmp4"],
     react: "🎬",
     desc: "Download enchanted videos from YouTube",
