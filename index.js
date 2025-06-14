@@ -88,7 +88,7 @@ const SESSIONS_API_KEY = 'subzero-md'; // Your API Key
 async function loadSession() {
     try {
         if (!config.SESSION_ID) {
-            console.log('No SESSION_ID provided - QR login will be generated');
+            console.log('No SESSION_ID provided please put one!');
             return null;
         }
 
@@ -1015,7 +1015,7 @@ if (isBanned) return; // Ignore banned users completely
 app.get('/', (req, res) => {
   res.redirect('/subzero.html');
 });
-  app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
+  app.listen(port, () => console.log(`STAR & FORK BRO 💙`));
   setTimeout(() => {
   connectToWA()
   }, 4000);
