@@ -145,7 +145,7 @@ const filer = File.fromURL(`https://mega.nz/file/${megaFileId}`);
 
 
 async function connectToWA() {
-    console.log("[❄️] SubZero Connecting to WhatsApp ⏳️...");
+    console.log("[❄️] Connecting to WhatsApp ⏳️...");
     
     // Load session if available (now handles both Koyeb and MEGA)
     const creds = await loadSession();
@@ -158,7 +158,7 @@ async function connectToWA() {
     
     const conn = makeWASocket({
         logger: P({ level: 'silent' }),
-        printQRInTerminal: !creds, // Only show QR if no session loaded
+        printQRInTerminal: false, // Only show QR if no session loaded
         browser: Browsers.macOS("Firefox"),
         syncFullHistory: true,
         auth: state,
@@ -180,7 +180,7 @@ async function connectToWA() {
                 console.log('[❄️] Connection closed, please change session ID');
             }
         } else if (connection === 'open') {
-            console.log('[❄️] SubZero MD connected to WhatsApp ✅');
+            console.log('[❄️] SubZero MD Connected ✅');
             
             
             // Load plugins
