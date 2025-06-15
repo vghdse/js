@@ -1015,7 +1015,7 @@ if (isBanned) return; // Ignore banned users completely
 app.get('/', (req, res) => {
   res.redirect('/subzero.html');
 });
-  app.listen(port, () => console.log(`STAR & FORK BRO 💙`));
+  app.listen(port, () => console.log(`THANKS BRO, STAR & FORK 💙`));
   setTimeout(() => {
   connectToWA()
   }, 4000);
