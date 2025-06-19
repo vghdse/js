@@ -197,9 +197,28 @@ async function connectToWA() {
      	
                 try {
 		// const username = config.REPO.split('/').slice(3, 4)[0];
-             const username = `mrfr8nk`;
+ const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
+ const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊"; // add your name
+ const subzero = { 
+ key: { 
+  remoteJid: 'status@broadcast', 
+  participant: '0@s.whatsapp.net' 
+   }, 
+message:{ 
+  newsletterAdminInviteMessage: { 
+    newsletterJid: '120363270086174844@newsletter', //add your channel jid
+    newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", //add your bot name
+    caption: botname + `𝐁𝐘` + ownername, 
+    inviteExpiration: 0
+  }
+ }
+}
+			
+			
+			
+	     const username = `mrfr8nk`;
              const mrfrank = `https://github.com/${username}`;
-		
+	
                     const upMessage = `\`SubZero Bot Connected!\` ✅
 \n\n> _Light, Cold, Icy, Fast & Rich Loaded With Features, SubZero W.A Bot._\n\n────────────────
 > 🌟 \`Star Repo\` : 
@@ -321,8 +340,9 @@ ${mrfrank}\n
                     await conn.sendMessage(conn.user.id, {
                         image: { url: 'https://files.catbox.moe/703kuc.jpg' },
                         ai: true,
-			caption: cmdList
-			 
+			caption: cmdList},{
+			quoted: subzero
+			
                     });
                     
                 } catch (sendError) {
