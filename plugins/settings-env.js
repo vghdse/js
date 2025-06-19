@@ -576,11 +576,12 @@ async (conn, mek, m, { from, args, isOwner, reply }) => {
         return reply(`Example: .autoviewstatus on`);
     }
 });
-/*
+
 cmd({
-    pattern: "anti-call",
+    pattern: "anticall",
+    react: "📞",
     alias: ["statusreaction"],
-    desc: "Enable or disable anti-call of statuses",
+    desc: "Enable or disable anti-call",
     category: "settings",
     filename: __filename
 },    
@@ -590,15 +591,16 @@ async (conn, mek, m, { from, args, isOwner, reply }) => {
     const status = args[0]?.toLowerCase();
     // Default value for AUTO_LIKE_STATUS is "false"
     if (args[0] === "on") {
-        config.ANTICALL = "true";
-        return reply("anti-call of statuses is now enabled.");
+        config.ANTI_CALL = "true";
+        return reply("Anticall  is now enabled.");
     } else if (args[0] === "off") {
-        config.ANTICALL = "false";
-        return reply("anti-call of statuses is now disabled.");
+        config.ANTI_CALL = "false";
+        return reply("Anticall  is now disabled.");
     } else {
-        return reply(`Example: .anti-call on`);
+        return reply(`⭕ Example: .anticall on/off`);
     }
 });
+/*
 //--------------------------------------------
 //  READ-MESSAGE COMMANDS
 //--------------------------------------------
