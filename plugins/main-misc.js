@@ -125,7 +125,7 @@ async (conn, mek, m, { from, reply, q, text, isCreator }) => {
                 await setAnti('status', true);
                 return reply('✅ AntiDelete enabled for Groups, DMs, and Status.');
 
-            case 'off all':
+            case 'off':
                 await setAnti('gc', false);
                 await setAnti('dm', false);
                 await setAnti('status', false);
@@ -172,15 +172,15 @@ async (conn, mek, m, { from, reply, q, text, isCreator }) => {
 
             default:
                 return reply(`
-🔐 *ANTIDELETE COMMAND GUIDE* 🔐
+\`🔐 *ANTIDELETE  GUIDE* 🔐\`
 
-╭───🛡️ Main Toggles ───
-├ • \`.antidelete on\` – Enable all (gc, dm, status)
-├ • \`.antidelete off all\` – Disable all
-├ • \`.antidelete set gc\` – Toggle Group Chat
-├ • \`.antidelete set dm\` – Toggle Direct Message
-├ • \`.antidelete set status\` – Toggle Status
-╰───────────────
+╭──❮ Main Toggles ❯─⟡
+├ • 🟢 \`.antidelete on\` – Enable all (gc, dm, status)
+├ • 🟢 \`.antidelete off\` – Disable all
+├ • 🟢 \`.antidelete set gc\` – Toggle Group Chat
+├ • 🟢 \`.antidelete set dm\` – Toggle Direct Message
+├ • 🟢 \`.antidelete set status\` – Toggle Status
+╰─────────────⟢
 
 📊 Use \`.antidelete status\` to check current settings.
 `);
