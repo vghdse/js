@@ -27,7 +27,7 @@ message:{
   newsletterAdminInviteMessage: { 
     newsletterJid: '120363270086174844@newsletter', //add your channel jid
     newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", //add your bot name
-    caption: botname + ` Verified By ` + ownername, 
+    caption: botname + ` 𝐁𝐘 ` + ownername, 
     inviteExpiration: 0
   }
  }
