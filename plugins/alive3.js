@@ -16,8 +16,8 @@ try{
  
 
  
- const botname = "SUBZERO MD"; //add your name
- const ownername = "MR FRANK"; // add your name
+ const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
+ const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊"; // add your name
  const Supunwa = { 
  key: { 
   remoteJid: 'status@broadcast', 
@@ -26,7 +26,7 @@ try{
 message:{ 
   newsletterAdminInviteMessage: { 
     newsletterJid: '120363270086174844@newsletter', //add your channel jid
-    newsletterName: "SUBZERO MD", //add your bot name
+    newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", //add your bot name
     caption: botname + ` Verified By ` + ownername, 
     inviteExpiration: 0
   }
