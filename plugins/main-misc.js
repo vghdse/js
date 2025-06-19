@@ -1,4 +1,4 @@
-const axios = require('axios');
+/*const axios = require('axios');
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const util = require("util");
@@ -97,4 +97,96 @@ async (conn, mek, m, { from, reply, q, text, isCreator, fromMe }) => {
     }
 });
 
+*/
+const axios = require('axios');
+const config = require('../config');
+const { cmd } = require('../command');
+const { getAnti, setAnti, initializeAntiDeleteSettings } = require('../data/antidel');
 
+initializeAntiDeleteSettings();
+
+cmd({
+    pattern: "antidelete",
+    alias: ['antidel', 'ad'],
+    desc: "Sets up the Antidelete system",
+    category: "misc",
+    filename: __filename
+},
+async (conn, mek, m, { from, reply, q, text, isCreator }) => {
+    if (!isCreator) return reply('❌ This command is only for the bot owner.');
+    try {
+        const command = q?.toLowerCase();
+
+        switch (command) {
+            case 'on':
+            case 'set all':
+                await setAnti('gc', true);
+                await setAnti('dm', true);
+                await setAnti('status', true);
+                return reply('✅ AntiDelete enabled for Groups, DMs, and Status.');
+
+            case 'off all':
+                await setAnti('gc', false);
+                await setAnti('dm', false);
+                await setAnti('status', false);
+                return reply('❌ AntiDelete disabled for all chats and status.');
+
+            case 'set gc':
+                const gc = await getAnti('gc');
+                await setAnti('gc', !gc);
+                return reply(`📣 Group Chat AntiDelete ${!gc ? 'enabled' : 'disabled'}.`);
+
+            case 'set dm':
+                const dm = await getAnti('dm');
+                await setAnti('dm', !dm);
+                return reply(`📥 Direct Message AntiDelete ${!dm ? 'enabled' : 'disabled'}.`);
+
+            case 'set status':
+                const st = await getAnti('status');
+                await setAnti('status', !st);
+                return reply(`🕒 Status AntiDelete ${!st ? 'enabled' : 'disabled'}.`);
+
+            case 'off gc':
+                await setAnti('gc', false);
+                return reply('❌ Group Chat AntiDelete is now disabled.');
+
+            case 'off dm':
+                await setAnti('dm', false);
+                return reply('❌ Direct Message AntiDelete is now disabled.');
+
+            case 'off status':
+                await setAnti('status', false);
+                return reply('❌ Status AntiDelete is now disabled.');
+
+            case 'status':
+                const gcStatus = await getAnti('gc');
+                const dmStatus = await getAnti('dm');
+                const statusStatus = await getAnti('status');
+                return reply(
+`📊 *AntiDelete Status:*
+
+👥 Group Chats: ${gcStatus ? '✅ Enabled' : '❌ Disabled'}
+📥 Direct Messages: ${dmStatus ? '✅ Enabled' : '❌ Disabled'}
+🕒 Status Updates: ${statusStatus ? '✅ Enabled' : '❌ Disabled'}`
+                );
+
+            default:
+                return reply(`
+🔐 *ANTIDELETE COMMAND GUIDE* 🔐
+
+╭───🛡️ Main Toggles ───
+├ • \`.antidelete on\` – Enable all (gc, dm, status)
+├ • \`.antidelete off all\` – Disable all
+├ • \`.antidelete set gc\` – Toggle Group Chat
+├ • \`.antidelete set dm\` – Toggle Direct Message
+├ • \`.antidelete set status\` – Toggle Status
+╰───────────────
+
+📊 Use \`.antidelete status\` to check current settings.
+`);
+        }
+    } catch (e) {
+        console.error("AntiDelete error:", e);
+        return reply("⚠️ An error occurred while processing the command.");
+    }
+});
