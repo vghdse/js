@@ -18,7 +18,7 @@ try{
  
  const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
  const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊"; // add your name
- const Supunwa = { 
+ const subzero = { 
  key: { 
   remoteJid: 'status@broadcast', 
   participant: '0@s.whatsapp.net' 
@@ -39,7 +39,7 @@ let des = `*👋 Hello ${pushname}*`
 return await conn.sendMessage(from,{
     image: {url: `https://files.catbox.moe/703kuc.jpg`},
     caption: des
-},{quoted: Supunwa})
+},{quoted: subzero})
 
 // {quoted: mek} ඔයාලගෙ ඔතන 👈 ඔහොම ඇත්තෙ එක උඩ විදිහට හදා ගන්න..👆
 
