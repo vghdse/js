@@ -208,7 +208,7 @@ message:{
   newsletterAdminInviteMessage: { 
     newsletterJid: '120363270086174844@newsletter', //add your channel jid
     newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", //add your bot name
-    caption: botname + `𝐁𝐘` + ownername, 
+    caption: botname + ` 𝐁𝐘 ` + ownername, 
     inviteExpiration: 0
   }
  }
@@ -232,8 +232,8 @@ ${mrfrank}\n
                     await conn.sendMessage(conn.user.id, { 
                         image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` },
 			ai: true,
-                        caption: upMessage
-			
+                        caption: upMessage},{
+			quoted: subzero
                     });
 		
    // Send settings menu after connection message
