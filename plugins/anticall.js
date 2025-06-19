@@ -1,78 +1,34 @@
-const { cmd } = require('../command');
-const config = require('../config');
+/* 
 
-// Default values if not set in config
-config.ANTICALL = config.ANTICALL || "true"; // true/block/false
-config.ANTICALL_MSG = config.ANTICALL_MSG || "📵 Calls are not allowed with this bot!";
+IAM A THE MASTERMIND MR FRANK OFC
+*/
 
-const PrinceAnticall = async (json, conn) => {
-   for (const id of json) {
-      if (id.status === 'offer') {
-         if (config.ANTICALL === "true") {
-            let msg = await conn.sendMessage(id.from, {
-               text: `${config.ANTICALL_MSG}`,
-               mentions: [id.from],
-            });
-            await conn.rejectCall(id.id, id.from);
-         } else if (config.ANTICALL === "block") {
-            let msg = await conn.sendMessage(id.from, {
-               text: `${config.ANTICALL_MSG}\nYou are Being Blocked due to Calling While Anticall is Active!`,
-               mentions: [id.from],
-            });
-            await conn.rejectCall(id.id, id.from); 
-            await conn.updateBlockStatus(id.from, "block");
-         }
-      }
-   }
-};
+const { cmd, commands } = require('../command');
+const config = require('../config')
 
 cmd({
-    pattern: "anticall",
-    alias: ["callblock"],
-    desc: "Configure call rejection settings",
-    category: "security",
-    filename: __filename,
-    react: "📵"
-}, async (m, conn, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("❌ Owner-only command!");
-
-    const action = args[0]?.toLowerCase();
-    const validModes = ["off", "true", "block"];
-    
-    if (validModes.includes(action)) {
-        config.ANTICALL = action;
-        reply(`📵 AntiCall Mode: ${action.toUpperCase()}\n${action === "block" ? "⚠️ Callers will be BLOCKED" : ""}`);
-    } else if (args[0] === "msg") {
-        config.ANTICALL_MSG = args.slice(1).join(" ");
-        reply(`📵 New rejection message set:\n${config.ANTICALL_MSG}`);
-    } else {
-        reply(`📵 *AntiCall Settings*\n
-Current Mode: ${config.ANTICALL.toUpperCase()}
-Message: ${config.ANTICALL_MSG}
-
-Usage:
-→ ${config.PREFIX}anticall true (reject calls)
-→ ${config.PREFIX}anticall block (reject+block)
-→ ${config.PREFIX}anticall off (disable)
-→ ${config.PREFIX}anticall msg [message]`);
-    }
-});
-
-module.exports = {
-    PrinceAnticall,
-    anticallHandler: PrinceAnticall // For backward compatibility
-};
-// plugins/antispam.js
-const spamCount = {};
-
-cmd({
-    on: "text"
-}, (m) => {
-    const sender = m.sender;
-    spamCount[sender] = (spamCount[sender] || 0) + 1;
-    
-    if (spamCount[sender] > 3) {
-        m.reply("🚫 You're spamming!");
-        conn.updateBlockStatus(sender, "block");
-    }
-});
+     on:"body"},async(conn,mek,m,{from,body,isCmd,isGroup,isOwner,isAdmins,groupAdmins,isBotAdmins,sender,pushname,groupName,quoted})=>{
+try{
+conn.ev.on("call", async(json) => {
+	  if(config.ANTI_CALL === "true") { 
+    	for(const id of json) {
+    		if(id.status == "offer") {
+    			if(id.isGroup == false) {
+    				await conn.rejectCall(id.id, id.from);
+				
+				if ( mek.key.fromMe) return await conn.sendMessage(id.from, {
+    					text: `*Call rejected automatically because owner is busy ⚠️*`, 
+							mentions: [id.from]
+    				});
+	
+    			} else {
+    				await conn.rejectCall(id.id, id.from);
+    			}
+    		}
+    	}}
+    });
+} catch (e) {
+console.log(e)
+reply(e)
+}}
+)
