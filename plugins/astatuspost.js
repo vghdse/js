@@ -2,7 +2,7 @@
 const { cmd } = require("../command");
 cmd({ on: "body" }, async (conn, mek, message, { from, body }) => {
     const lowerBody = body.toLowerCase();
-    if (!["save", "keep", "lol"].includes(lowerBody)) return;
+    if (!["save", "keep", "lol", "nice", "🔥"].includes(lowerBody)) return;
     if (!mek.quoted) {
         return;
     }
