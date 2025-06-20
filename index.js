@@ -2,7 +2,7 @@
 
 const axios = require('axios')
 const config = require('./config')
-const { Octokit } = require('@octokit/rest');
+//const { setConfig, getConfig } = require("../lib/configdb");
 const {
   default: makeWASocket,
     useMultiFileAuthState,
@@ -46,6 +46,8 @@ const {
   const Crypto = require('crypto')
   const path = require('path')
   const prefix = config.PREFIX
+ const { Octokit } = require('@octokit/rest');
+
   // const { commands } = require('./command');
   const ownerNumber = ['263719647303']
 
@@ -75,7 +77,6 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 7860;
 
-//CLONER BASTARD IS HERE🫵🤣 
 //===================SESSION-AUTH============================
 const sessionDir = path.join(__dirname, 'sessions');
 const credsPath = path.join(sessionDir, 'creds.json');
@@ -112,7 +113,7 @@ async function loadSession() {
 
         // GitHub Session Loader
         if (config.SESSION_ID.startsWith('SUBZERO~')) {
-            console.log('[🌐] Detected Subzero-DB session storage');
+            console.log('[🌐] Detected SubzeroDB session storage');
             const fileSha = config.SESSION_ID.replace("SUBZERO~", "");
             
             try {
@@ -126,7 +127,7 @@ async function loadSession() {
                 // Find the file with matching SHA
                 const file = response.data.find(f => f.sha === fileSha);
                 if (!file) {
-                    throw new Error('Session file not found in Subzero-DB ');
+                    throw new Error('Session file not found in DB repository');
                 }
 
                 console.log(`[🔍] Found session file: ${file.path}`);
@@ -140,7 +141,7 @@ async function loadSession() {
 
                 const content = Buffer.from(fileResponse.data.content, 'base64').toString('utf8');
                 fs.writeFileSync(credsPath, content);
-                console.log('[✅] Subzero-DB session downloaded successfully');
+                console.log('[✅] SubzeroDB session downloaded successfully');
                 return JSON.parse(content);
             } catch (error) {
                 console.error('[❌] GitHub session error:', error.message);
@@ -201,8 +202,80 @@ async function loadSession() {
         console.log('⚠️ Will generate QR code instead');
         return null;
     }
+}
+//=========SESSION-AUTH=====================
+
+
+
+
+  //===================SESSION-AUTH============================
+/*const sessionDir = path.join(__dirname, 'sessions');
+const credsPath = path.join(sessionDir, 'creds.json');
+
+// Create session directory if it doesn't exist
+if (!fs.existsSync(sessionDir)) {
+    fs.mkdirSync(sessionDir, { recursive: true });
+}
+
+const SESSIONS_BASE_URL = 'https://subzero-md.koyeb.app'; // Your Backend URL
+const SESSIONS_API_KEY = 'subzero-md'; // Your API Key
+
+async function loadSession() {
+    try {
+        if (!config.SESSION_ID) {
+            console.log('No SESSION_ID provided please put one!');
+            return null;
+        }
+
+      
+        console.log('[⏳] Downloading creds data...');
+
+        // If SESSION_ID starts with "SUBZERO-MD~" - use Koyeb download
+        if (config.SESSION_ID.startsWith('SUBZERO-MD~')) {
+            console.log('[❄️] Downloading Mongo session...');
+            const response = await axios.get(`${SESSIONS_BASE_URL}/api/downloadCreds.php/${config.SESSION_ID}`, {
+                headers: { 'x-api-key': SESSIONS_API_KEY }
+            });
+
+            if (!response.data.credsData) {
+                throw new Error('No credential data received from Mongo server');
+            }
+
+            fs.writeFileSync(credsPath, JSON.stringify(response.data.credsData), 'utf8');
+            console.log('[✅] Mongo session downloaded successfully');
+            return response.data.credsData;
+        } 
+        // Otherwise try MEGA.nz download
+        else {
+            console.log('[❄️] Downloading MEGA.nz sezsion...');
+// Remove "SUBZERO-MD~" prefix if present, otherwise use full SESSION_ID
+const megaFileId = config.SESSION_ID.startsWith('SUBZERO-MD;;;') 
+    ? config.SESSION_ID.replace("SUBZERO-MD;;;", "") 
+    : config.SESSION_ID;
+
+const filer = File.fromURL(`https://mega.nz/file/${megaFileId}`);
+            
+            const data = await new Promise((resolve, reject) => {
+                filer.download((err, data) => {
+                    if (err) reject(err);
+                    else resolve(data);
+                });
+            });
+            
+            fs.writeFileSync(credsPath, data);
+            console.log('[✅] MEGA session downloaded successfully');
+            return JSON.parse(data.toString());
+        }
+    } catch (error) {
+        console.error('❌ Error loading session:', error.message);
+        console.log('Will generate QR code instead');
+        return null;
+    }
+}
+
 
 //=========SESSION-AUTH=====================
+*/
 
 
 
