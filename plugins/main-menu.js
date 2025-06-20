@@ -56,7 +56,25 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         
         // Calculate total commands from the commands collection (supports both arrays and objects)
         const totalCommands = Array.isArray(commands) ? commands.length : Object.keys(commands).length;
+        
+      /*  const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
+const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊"; // add your name
 
+const subzero = { 
+  key: { 
+    remoteJid: 'status@broadcast', 
+    participant: '0@s.whatsapp.net' 
+  }, 
+  message: { 
+    newsletterAdminInviteMessage: { 
+      newsletterJid: '120363270086174844@newsletter', // your channel jid
+      newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", // your bot name
+      caption: botname + ` 𝐁𝐘 ` + ownername, 
+      inviteExpiration: 0
+    }
+  }
+};
+*/
         let dec = `
 
        \`\`\`${config.BOT_NAME}\`\`\`
@@ -189,9 +207,10 @@ ${readMore}
 *👨‍💻 \`OWNER-CMD\` 👨‍💻* 
 
 ╭─────────────···◈
-*┋* *⬡ sᴇᴛʙᴏᴛɴᴀᴍᴇ*
-*┋* *⬡ sᴇᴛᴏᴡɴᴇʀɴᴀᴍᴇ*
-*┋* *⬡ sᴇᴛʙᴏᴛɪᴍᴀɢᴇ* <ᴜʀʟ>
+*┋* *⬡  ${config.PREFIX}ᴀɴᴛɪᴄᴀʟʟ ᴏɴ/ᴏғғ*
+*┋* *⬡  ${config.PREFIX}sᴇᴛʙᴏᴛɴᴀᴍᴇ*
+*┋* *⬡  ${config.PREFIX}sᴇᴛᴏᴡɴᴇʀɴᴀᴍᴇ*
+*┋* *⬡  ${config.PREFIX}sᴇᴛʙᴏᴛɪᴍᴀɢᴇ* <ᴜʀʟ>/ʀᴇᴘʟʏ
 *┋* *⬡ ${config.PREFIX}ᴘᴍʙʟᴏᴄᴋᴇʀ*
 *┋* *⬡ ${config.PREFIX}ᴀᴅᴅᴏᴡɴᴇʀ*
 *┋* *⬡ ${config.PREFIX}ᴀᴅᴅsᴜᴅᴏ*
@@ -310,6 +329,7 @@ ${readMore}
 
 ╭─────────────···◈
 *┋* *⬡ ${config.PREFIX}ᴏʙғᴜsᴄᴀᴛᴇ*
+*┋* *⬡  ${config.PREFIX}ᴏʙғᴜsᴀᴛᴇ2*
 *┋* *⬡ ${config.PREFIX}ᴛᴏᴍᴘ3*
 *┋* *⬡ ${config.PREFIX}ᴛᴏᴘᴘᴛ*
 *┋* *⬡ ${config.PREFIX}ᴛᴏᴠɪᴅᴇᴏ*
@@ -393,18 +413,18 @@ ${readMore}
 *┋* *⬡ ${config.PREFIX}xɴxxᴠɪᴅᴇᴏ*
 ╰─────────────╶╶···◈*
 
-*⚠️ \`BUG MENU\` ⚠️* 
+*⚠️ \`CHANNEL MENU\` ⚠️* 
 
 ╭─────────────···◈
 *┋* 
-*┋* *⬡ ${config.PREFIX}ᴢᴇʀᴏᴄʀᴀsʜ*
-*┋* *⬡ ${config.PREFIX}ᴢᴇʀᴏғʀᴇᴇᴢᴇ*
-*┋* *⬡ ${config.PREFIX}ᴢᴇʀᴏʟᴀɢ*
-*┋* *⬡ ${config.PREFIX}ᴢɪᴏs*
-*┋* *⬡ ${config.PREFIX}ᴢᴀɴᴅʀᴏɪᴅ*
-*┋* *⬡ ${config.PREFIX}ᴢᴋɪʟʟ*
-*┋* *⬡ ${config.PREFIX}ᴢsᴘᴀᴍ*
-*┋* *⬡ ${config.PREFIX}ᴢᴢʟᴏᴏᴅ*
+*┋* *⬡ ${config.PREFIX}ᴄʜᴀɴɴᴇʟʀᴇᴀᴄᴛ*
+*┋* *⬡ ${config.PREFIX}ᴄʜᴀɴɴᴇʟʀᴇᴀᴄᴛ2*
+*┋* *⬡ ${config.PREFIX}ғᴏʟʟᴏᴡᴄʜᴀɴɴᴇʟ*
+*┋* *⬡ ${config.PREFIXᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
+*┋* *⬡ ${config.PREFIX}ᴜɴᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
+*┋* *⬡ ${config.PREFIX}ᴅᴇʟᴇᴛᴇᴄʜᴀɴɴᴇʟᴅᴘ*
+*┋* *⬡ ${config.PREFIXsᴇᴛᴄʜᴀɴɴᴇʟɴᴀᴍᴇ*
+*┋* *⬡ ${config.PREFIX}sᴇᴛᴄʜᴀɴɴᴇʟᴅᴇsᴄ*
 *┋* *⬡ ${config.PREFIX}ᴢᴇʀᴏᴇxᴇᴄᴜᴛɪᴏɴ*
 *┋* *⬡ ${config.PREFIX}ᴢʜᴇᴀᴅsʜᴏʀᴛ*
 *┋* *⬡ ${config.PREFIX}ᴢᴜɪ*
