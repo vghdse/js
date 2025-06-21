@@ -1,4 +1,4 @@
-const config = require('../config');
+/*const config = require('../config');
 const { cmd } = require('../command');
 
 // List of reactions to use
@@ -51,3 +51,4 @@ async (conn, mek, m, { from, isCreator, reply }) => {
 ╰────────────────┈⊷
 > *Bot is automatically reacting to all messages in the channel*`);
 });
+*/
