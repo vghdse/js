@@ -420,7 +420,7 @@ ${readMore}
 *┋* *⬡ ${config.PREFIX}ᴄʜᴀɴɴᴇʟʀᴇᴀᴄᴛ*
 *┋* *⬡ ${config.PREFIX}ᴄʜᴀɴɴᴇʟʀᴇᴀᴄᴛ2*
 *┋* *⬡ ${config.PREFIX}ғᴏʟʟᴏᴡᴄʜᴀɴɴᴇʟ*
-*┋* *⬡ ${config.PREFIXᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
+*┋* *⬡ ${config.PREFIX}ᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
 *┋* *⬡ ${config.PREFIX}ᴜɴᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
 *┋* *⬡ ${config.PREFIX}ᴅᴇʟᴇᴛᴇᴄʜᴀɴɴᴇʟᴅᴘ*
 *┋* *⬡ ${config.PREFIXsᴇᴛᴄʜᴀɴɴᴇʟɴᴀᴍᴇ*
