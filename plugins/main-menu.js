@@ -57,7 +57,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         // Calculate total commands from the commands collection (supports both arrays and objects)
         const totalCommands = Array.isArray(commands) ? commands.length : Object.keys(commands).length;
         
-      /*  const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
+        const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
 const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊"; // add your name
 
 const subzero = { 
@@ -74,7 +74,7 @@ const subzero = {
     }
   }
 };
-*/
+
         let dec = `
 
        \`\`\`${config.BOT_NAME}\`\`\`
@@ -453,7 +453,7 @@ ${readMore}
                     }
                 }
             },
-            { quoted: mek }
+            { quoted: subzero }
         );
       
         /*
