@@ -423,7 +423,7 @@ ${readMore}
 *┋* *⬡ ${config.PREFIX}ᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
 *┋* *⬡ ${config.PREFIX}ᴜɴᴍᴜᴛᴇᴄʜᴀɴɴᴇʟ*
 *┋* *⬡ ${config.PREFIX}ᴅᴇʟᴇᴛᴇᴄʜᴀɴɴᴇʟᴅᴘ*
-*┋* *⬡ ${config.PREFIXsᴇᴛᴄʜᴀɴɴᴇʟɴᴀᴍᴇ*
+*┋* *⬡ ${config.PREFIX}sᴇᴛᴄʜᴀɴɴᴇʟɴᴀᴍᴇ*
 *┋* *⬡ ${config.PREFIX}sᴇᴛᴄʜᴀɴɴᴇʟᴅᴇsᴄ*
 *┋* *⬡ ${config.PREFIX}ᴢᴇʀᴏᴇxᴇᴄᴜᴛɪᴏɴ*
 *┋* *⬡ ${config.PREFIX}ᴢʜᴇᴀᴅsʜᴏʀᴛ*
