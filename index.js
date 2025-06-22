@@ -271,7 +271,7 @@ async function connectToWA() {
                     },
                     message: {
                         newsletterAdminInviteMessage: {
-                            newsletterJid: '120363270086174844@newsletter', //add your channel jid
+                            newsletterJid: '120363304325601080@newsletter', //add your channel jid
                             newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓", //add your bot name
                             caption: botname + ` 𝐁𝐘 ` + ownername,
                             inviteExpiration: 0
@@ -460,7 +460,7 @@ ${mrfrank}\n
             await conn.readMessages([mek.key])
 
             const newsletterJids = [
-                "120363270086174844@newsletter@newsletter"
+                "120363304325601080@newsletter"
             ];
             const emojis = ["❤️", "🔥", "😯"];
 
