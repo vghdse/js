@@ -238,7 +238,7 @@ async function connectToWA() {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection === 'close') {
-            if (lastDisconnect.error ? .output ? .statusCode !== DisconnectReason.loggedOut) {
+            if (lastDisconnect.error ?.output ?.statusCode !== DisconnectReason.loggedOut) {
                 console.log('[❄️] Connection lost, reconnecting...');
                 setTimeout(connectToWA, 5000);
             } else {
