@@ -2,7 +2,6 @@
 
 IAM A THE MASTERMIND MR FRANK OFC
 */
-/*
 const { cmd, commands } = require('../command');
 const config = require('../config')
 
@@ -32,12 +31,12 @@ console.log(e)
 reply(e)
 }}
 )
-*/
+
 
 /* 
 IAM A THE MASTERMIND MR FRANK OFC
 */
-
+/*
 const { cmd, commands } = require('../command');
 const config = require('../config');
 
@@ -64,3 +63,4 @@ module.exports = async function setupCallBlock(conn) {
         }
     });
 }
+*/
