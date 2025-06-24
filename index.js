@@ -493,6 +493,7 @@ if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
         console.error("Error reacting to channel message:", e);
     }
 }
+        }
 
             
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
