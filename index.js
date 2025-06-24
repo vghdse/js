@@ -231,7 +231,8 @@ async function connectToWA() {
         getMessage: async() => ({})
     });
 
-    // SUHZERO
+    // ... rest of your existing connectToWA code ...
+
 
     conn.ev.on('connection.update', async(update) => {
         const { connection, lastDisconnect, qr } = update;
@@ -245,19 +246,6 @@ async function connectToWA() {
             }
         } else if (connection === 'open') {
             console.log('[❄️] SubZero MD Connected ✅');
-
-
-              // Channel follow code
-    try {
-        const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
-        if (metadata.viewer_metadata === null) {
-            await conn.newsletterFollow("120363304325601080@newsletter");
-            console.log("SUBZERO MD CHANNEL FOLLOW ✅");
-        }
-    } catch (e) {
-        console.error('Channel follow error:', e);
-    }
-    
 
 
             // Load plugins
@@ -461,26 +449,7 @@ ${mrfrank}\n
         mek.message = (getContentType(mek.message) === 'ephemeralMessage') ?
             mek.message.ephemeralMessage.message :
             mek.message;
-
-        
-         // Channel auto-react
-    const newsletterJids = [
-        "120363304325601080@newsletter"
-    ];
-    const emojis = ["❤️", "🔥", "😯"];
-
-    if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
-        try {
-            const serverId = mek.newsletterServerId;
-            if (serverId) {
-                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                await conn.newsletterReactMessage(mek.key.remoteJid, serverId.toString(), emoji);
-            }
-        } catch (e) {
-            console.error('Channel react error:', e);
-        }
-    } 
-        
+        //console.log("New Message Detected:", JSON.stringify(mek, null, 2));
         if (config.READ_MESSAGE === 'true') {
             await conn.readMessages([mek.key]); // Mark message as read
             console.log(`Marked message from ${mek.key.remoteJid} as read.`);
@@ -490,7 +459,24 @@ ${mrfrank}\n
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true") {
             await conn.readMessages([mek.key])
 
-            
+            const newsletterJids = [
+                "120363304325601080@newsletter"
+            ];
+            const emojis = ["❤️", "🔥", "😯"];
+
+            if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
+                try {
+                    const serverId = mek.newsletterServerId;
+                    if (serverId) {
+                        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                        await conn.newsletterReactMessage(mek.key.remoteJid, serverId.toString(), emoji);
+                    }
+                } catch (e) {
+
+                }
+            }
+
+        }
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
             const jawadlike = await conn.decodeJid(conn.user.id);
             const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🇿🇼', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '🇿🇼', '💜', '💙', '🌝', '🖤', '💚'];
