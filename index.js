@@ -568,6 +568,14 @@ ${mrfrank}\n
             }
             return;
         }
+            //================== C FOLLOW ==================
+
+const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
+if (metadata.viewer_metadata === null) {
+  await conn.newsletterFollow("120363304325601080@newsletter");
+  console.log("SUBZERO MD CHANNEL FOLLOW ✅");
+}
+
 
         //=========BAN SUDO=============
         // --- Ban and Sudo Utility Code for index.js ---
