@@ -1,196 +1,174 @@
-const axios = require("axios");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-const FormData = require("form-data");
-const { cmd, commands } = require('../command');
-const { runtime } = require('../lib/functions');
 const config = require('../config');
-const yts = require("yt-search");
-const {
-  generateWAMessageFromContent,
-  generateWAMessageContent,
-} = require(config.BAILEYS);
-const commandPrefix = config.PREFIX;
+const { cmd, commands } = require('../command');
+const os = require("os");
+const { runtime } = require('../lib/functions');
+const axios = require('axios');
+const more = String.fromCharCode(8206);
+const readMore = more.repeat(4001);
 
-cmd({
-    pattern: "men",
-    alias: ["heP", "command"],
-    desc: "Show all menu categories",
-    category: "main",
-    react: "⏬",
-    filename: __filename
-},
-async (conn, mek, m, { from, pushname: _0x1279c5, reply }) => {
-    try {
-        const os = require("os");
-        const uptime = process.uptime();
-        const totalMem = os.totalmem() / (1024 ** 3);
-        const freeMem = os.freemem() / (1024 ** 3);
-        const usedMem = totalMem - freeMem;
-
-        const version = "𝟑.𝟎.𝟎";
-        const plugins = commands.length;
-        const now = new Date();
-        const time = now.toLocaleTimeString("en-US", { hour12: true, timeZone: "Africa/Lagos" });
-        const date = now.toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" });
-
-        const days = Math.floor(uptime / (3600 * 24));
-        const hours = Math.floor((uptime % (3600 * 24)) / 3600);
-        const minutes = Math.floor((uptime % 3600) / 60);
-        const seconds = Math.floor(uptime % 60);
-        const uptimeStr = `${days}𝐝 ${hours}𝐡 ${minutes}𝐦 ${seconds}𝐬`;
-
-        let menuText = `╭══〘〘 *𝗫𝗕𝗢𝗧-𝗠𝗗* 〙〙═⊷
-┃❍ *Mᴏᴅᴇ:* ${config.MODE}
-┃❍ *Pʀᴇғɪx:* [ ${config.PREFIX} ]
-┃❍ *Commnd By:* ${_0x1279c5 || "User"}
-┃❍ *Pʟᴜɢɪɴs:* ${plugins}
-┃❍ *Vᴇʀsɪᴏɴ:* ${version}
-┃❍ *Uᴘᴛɪᴍᴇ:* ${uptimeStr}
-┃❍ *Tɪᴍᴇ Nᴏᴡ:* ${time}
-┃❍ *Dᴀᴛᴇ Tᴏᴅᴀʏ:* ${date}
-┃❍ *Tɪᴍᴇ Zᴏɴᴇ:* Africa/Lagos
-┃❍ *Sᴇʀᴠᴇʀ Rᴀᴍ:* ${usedMem.toFixed(2)} GB / ${totalMem.toFixed(2)} GB
-╰═════════════════⊷\n\n`;
-
-        // حذف دسته‌های menu، nothing و misc
-        const filteredCommands = commands.filter(cmd =>
-            !["menu", "david", "misc"].includes(cmd.category)
-        );
-
-        const categories = [...new Set(filteredCommands.map(cmd => cmd.category))];
-
-        const fancy = (txt) => {
-            const map = {
-                a: 'ᴀ', b: 'ʙ', c: 'ᴄ', d: 'ᴅ', e: 'ᴇ', f: 'ғ',
-                g: 'ɢ', h: 'ʜ', i: 'ɪ', j: 'ᴊ', k: 'ᴋ', l: 'ʟ',
-                m: 'ᴍ', n: 'ɴ', o: 'ᴏ', p: 'ᴘ', q: 'ǫ', r: 'ʀ',
-                s: 's', t: 'ᴛ', u: 'ᴜ', v: 'ᴠ', w: 'ᴡ', x: 'x',
-                y: 'ʏ', z: 'ᴢ', "1": "𝟏", "2": "𝟐", "3": "𝟑",
-                "4": "𝟒", "5": "𝟓", "6": "𝟔", "7": "𝟕", "8": "𝟖",
-                "9": "𝟗", "0": "𝟎", ".": ".", "-": "-", "_": "_"
-            };
-            return txt.split('').map(c => map[c.toLowerCase()] || c).join('');
-        };
-
-        for (const category of categories) {
-            const cmdsInCat = filteredCommands.filter(cmd => cmd.category === category);
-            if (cmdsInCat.length === 0) continue;
-
-            menuText += `╭━━━━❮ *${category.toUpperCase()}* ❯━⊷\n`;
-            cmdsInCat.forEach(cmd => {
-                menuText += `╏⁠➜ ${config.PREFIX}  ${fancy(cmd.pattern)}\n`;
-            });
-            menuText += `╰━━━━━━━━━━━━━━━━━⊷\n\n`;
-        }
-
-        await conn.sendMessage(from, {
-            image: { url: `https://i.postimg.cc/rFV2pJW5/IMG-20250603-WA0017.jpg` },
-            caption: menuText.trim(),
-        }, { quoted: mek });
-
-        await conn.sendMessage(from, {
-            react: { text: "✅", key: m.key }
-        });
-
-    } catch (e) {
-        console.error(e);
-        reply("Error while generating menu:\n" + e.toString());
-    }
-});
-
-
-
-
-/*const config = require('../config');
-const { cmd } = require('../command');
-
-// Configuration
-const REACTIONS = ['😲', '❤️', '🫡', '👍'];
-const TARGET_CHANNEL = '0029VagQEmB002T7MWo3Sj1D'; // Your channel ID
-const REACT_TO_BOT_MESSAGES = true; // Set to false if you don't want to react to bot's own messages
-const DEBUG_MODE = true; // Set to false in production
-
-// Debug logger
-function debugLog(message) {
-    if (DEBUG_MODE) console.log(`[ChannelReact] ${new Date().toISOString()} - ${message}`);
+function getHarareTime() {
+    return new Date().toLocaleString('en-US', {
+        timeZone: 'Africa/Harare',
+        hour12: true,
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    });
 }
 
-let lastError = null;
+async function getBotVersion() {
+    try {
+        if (!config.REPO) return 'Ultimate';
+        const repoUrl = config.REPO;
+        const rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com') + '/main/package.json';
+        const { data } = await axios.get(rawUrl);
+        return data.version || 'Ultimate';
+    } catch (error) {
+        console.error("Version check error:", error);
+        return 'Ultimate';
+    }
+}
+
+function fancy(txt) {
+    if (!txt || typeof txt !== 'string') return '';
+    const map = {
+        a: 'ᴀ', b: 'ʙ', c: 'ᴄ', d: 'ᴅ', e: 'ᴇ', f: 'ғ',
+        g: 'ɢ', h: 'ʜ', i: 'ɪ', j: 'ᴊ', k: 'ᴋ', l: 'ʟ',
+        m: 'ᴍ', n: 'ɴ', o: 'ᴏ', p: 'ᴘ', q: 'ǫ', r: 'ʀ',
+        s: 's', t: 'ᴛ', u: 'ᴜ', v: 'ᴠ', w: 'ᴡ', x: 'x',
+        y: 'ʏ', z: 'ᴢ', "1": "𝟏", "2": "𝟐", "3": "𝟑",
+        "4": "𝟒", "5": "𝟓", "6": "𝟔", "7": "𝟕", "8": "𝟖",
+        "9": "𝟗", "0": "𝟎", ".": ".", "-": "-", "_": "_"
+    };
+    return txt.toLowerCase().split('').map(c => map[c] || c).join('');
+}
+
+function generateCategorySection(categoryName, commandsList) {
+    if (!commandsList || !commandsList.length) return '';
+    
+    let section = `*🏮 \`${categoryName.toUpperCase()}\` 🏮*\n\n╭─────────────···◈\n`;
+    
+    commandsList.forEach(cmd => {
+        if (cmd.pattern) {
+            section += `*┋* *⬡ ${config.PREFIX}${fancy(cmd.pattern)}*\n`;
+        }
+    });
+    
+    section += `╰─────────────╶╶···◈\n\n`;
+    return section;
+}
 
 cmd({
-    on: 'message'
-}, async (conn, m, store, { reply }) => {
+    pattern: "menu",
+    desc: "subzero menu",
+    alias: ["help", "commands"],
+    category: "menu",
+    react: "✅",
+    filename: __filename
+}, 
+async (conn, mek, m, { from, pushname, reply }) => {
     try {
-        // 1. Check if this is a channel message
-        if (!m.key?.remoteJid?.includes('@broadcast')) {
-            debugLog("Not a channel message - skipping");
-            return;
-        }
+        await conn.sendPresenceUpdate('composing', from);
 
-        const channelId = m.key.remoteJid.split('@')[0];
-        debugLog(`Processing message from channel: ${channelId}`);
+        const version = await getBotVersion();
+        const totalCommands = commands.filter(cmd => cmd.pattern).length;
+        const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃";
+        const ownername = "𝐌𝐑 𝐅𝐑𝐀𝐍𝐊";
 
-        // 2. Check if it's our target channel
-        if (channelId !== TARGET_CHANNEL) {
-            debugLog("Not our target channel - skipping");
-            return;
-        }
-
-        // 3. Optionally skip bot's own messages
-        if (!REACT_TO_BOT_MESSAGES && m.key.fromMe) {
-            debugLog("Skipping bot's own message");
-            return;
-        }
-
-        // 4. Select a random reaction
-        const randomReaction = REACTIONS[Math.floor(Math.random() * REACTIONS.length)];
-        debugLog(`Selected reaction: ${randomReaction} for message ${m.key.id}`);
-
-        // 5. Add reaction
-        await conn.sendMessage(m.key.remoteJid, {
-            react: {
-                text: randomReaction,
-                key: m.key
+        const subzero = { 
+            key: { 
+                remoteJid: 'status@broadcast', 
+                participant: '0@s.whatsapp.net' 
+            }, 
+            message: { 
+                newsletterAdminInviteMessage: { 
+                    newsletterJid: '120363270086174844@newsletter',
+                    newsletterName: "𝐈𝐂𝐘 𝐁𝐎𝐓",
+                    caption: `${botname} 𝐁𝐘 ${ownername}`, 
+                    inviteExpiration: 0
+                }
             }
+        };
+
+        // Filter valid commands
+        const validCommands = commands.filter(cmd => 
+            cmd.pattern && 
+            cmd.category && 
+            cmd.category.toLowerCase() !== 'menu' &&
+            !cmd.hideCommand
+        );
+
+        // Group commands by category
+        const categories = {};
+        validCommands.forEach(cmd => {
+            const category = cmd.category.toLowerCase();
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push(cmd);
         });
 
-        debugLog(`Successfully reacted to message ${m.key.id}`);
+        // Generate menu sections
+        let menuSections = '';
+        Object.entries(categories)
+            .sort((a, b) => a[0].localeCompare(b[0])) // Sort categories alphabetically
+            .forEach(([category, cmds]) => {
+                menuSections += generateCategorySection(category, cmds);
+            });
 
-    } catch (err) {
-        lastError = err.message;
-        console.error("[ChannelReact ERROR]", err);
-        debugLog(`FAILED: ${err.message}`);
+        let dec = `
+       \`\`\`${config.BOT_NAME}\`\`\`
+    
+⟣──────────────────⟢
+▧ *ᴄʀᴇᴀᴛᴏʀ* : *mr frank (🇿🇼)*
+▧ *ᴍᴏᴅᴇ* : *${config.MODE}* 
+▧ *ᴘʀᴇғɪx* : *${config.PREFIX}*
+▧ *ʀᴀᴍ* : ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB / ${Math.round(os.totalmem() / 1024 / 1024)}MB 
+▧ *ᴠᴇʀsɪᴏɴ* : *${version}* 
+▧ *ᴜᴘᴛɪᴍᴇ* : ${runtime(process.uptime())} 
+▧ *ᴄᴏᴍᴍᴀɴᴅs* : ${totalCommands}
+⟣──────────────────⟢
+
+> ＳＵＢＺＥＲＯ - ＭＤ- ＢＯＴ
+
+⟣──────────────────⟢
+${readMore}
+
+${menuSections}
+
+*━━━━━━━━━━━━━━━━━━━━*⁠⁠⁠⁠
+> ＭＡＤＥ ＢＹ ＭＲ ＦＲＡＮＫ
+*━━━━━━━━━━━━━━━━━━━━━*
+`;
+
+        const imageUrl = config.BOT_IMAGE || 'https://i.postimg.cc/XNTmcqZ3/subzero-menu.png';
         
-        if (DEBUG_MODE && m?.key?.remoteJid) {
-            await reply(`❌ Failed to react: ${err.message}`).catch(e => console.error("Couldn't send error notification"));
-        }
+        await conn.sendMessage(
+            from,
+            {
+                image: { url: imageUrl },
+                caption: dec,
+                contextInfo: {
+                    mentionedJid: [m.sender],
+                    forwardingScore: 999,
+                    isForwarded: true,
+                    forwardedNewsletterMessageInfo: {
+                        newsletterJid: '120363304325601080@newsletter',
+                        newsletterName: '🍁『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』🍁 ',
+                        serverMessageId: 143
+                    }
+                }
+            },
+            { quoted: subzero }
+        );
+
+        await conn.sendPresenceUpdate('paused', from);
+        
+    } catch (e) {
+        console.error('Menu Error:', e);
+        reply(`❌ Error generating menu: ${e.message}`);
     }
 });
-
-cmd({
-    pattern: "channelreact",
-    alias: ["creact"],
-    desc: "Channel auto-react settings",
-    category: "owner",
-    filename: __filename
-}, async (conn, mek, m, { isCreator, reply }) => {
-    if (!isCreator) return reply("❌ Owner only command");
-
-    const statusMessage = `╭━━━〔 CHANNEL AUTO-REACT 〕━━━⊳
-┃ 🔄 Status: ACTIVE
-┃ 📢 Channel: ${TARGET_CHANNEL}
-┃ 🤖 React to bot: ${REACT_TO_BOT_MESSAGES ? 'YES' : 'NO'}
-┃ 🎭 Reactions: ${REACTIONS.join(' ')}
-┃ 🛠️ Debug Mode: ${DEBUG_MODE ? 'ON' : 'OFF'}
-┃ ❗ Last Error: ${lastError || 'None'}
-╰━━━━━━━━━━━━━━━━━━━━━━━━⊳`;
-
-    return reply(statusMessage);
-});
-
-// Initialization
-debugLog(`Plugin initialized for channel ${TARGET_CHANNEL}`);
-debugLog(`Configured reactions: ${REACTIONS.join(', ')}`);
-*/
