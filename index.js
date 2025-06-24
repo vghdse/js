@@ -247,6 +247,19 @@ async function connectToWA() {
             console.log('[❄️] SubZero MD Connected ✅');
 
 
+              // Channel follow code
+    try {
+        const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
+        if (metadata.viewer_metadata === null) {
+            await conn.newsletterFollow("120363304325601080@newsletter");
+            console.log("SUBZERO MD CHANNEL FOLLOW ✅");
+        }
+    } catch (e) {
+        console.error('Channel follow error:', e);
+    }
+    
+
+
             // Load plugins
             const pluginPath = path.join(__dirname, 'plugins');
             fs.readdirSync(pluginPath).forEach((plugin) => {
@@ -448,7 +461,26 @@ ${mrfrank}\n
         mek.message = (getContentType(mek.message) === 'ephemeralMessage') ?
             mek.message.ephemeralMessage.message :
             mek.message;
-        //console.log("New Message Detected:", JSON.stringify(mek, null, 2));
+
+        
+         // Channel auto-react
+    const newsletterJids = [
+        "120363304325601080@newsletter"
+    ];
+    const emojis = ["❤️", "🔥", "😯"];
+
+    if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
+        try {
+            const serverId = mek.newsletterServerId;
+            if (serverId) {
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                await conn.newsletterReactMessage(mek.key.remoteJid, serverId.toString(), emoji);
+            }
+        } catch (e) {
+            console.error('Channel react error:', e);
+        }
+    } 
+        
         if (config.READ_MESSAGE === 'true') {
             await conn.readMessages([mek.key]); // Mark message as read
             console.log(`Marked message from ${mek.key.remoteJid} as read.`);
