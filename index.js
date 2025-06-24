@@ -1,4 +1,4 @@
-// CLONER DETECTED
+
 
 const axios = require('axios')
 const config = require('./config')
@@ -91,7 +91,7 @@ if (!fs.existsSync(sessionDir)) {
 // Configuration for different session providers
 const SESSION_PROVIDERS = {
     GITHUB: {
-        TOKEN: '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',
+        TOKEN: '',
         REPO_NAME: 'SUBZERO-SESSIONS',
         REPO_OWNER: 'mrfr8nk' // Replace with your GitHub username
     },
