@@ -141,7 +141,7 @@ for (let j = 0 ; j < config.JIDS.length; j++) {
 					    contextInfo: {
           externalAdReply: { 
 					title: mov.title,
-					body: config.BODY,
+					body: config.FOOTER,
 					mediaType: 1,
 					sourceUrl: mov.url,
           thumbnailUrl: mov.large_cover_image ,
