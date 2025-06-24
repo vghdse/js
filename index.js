@@ -91,7 +91,7 @@ if (!fs.existsSync(sessionDir)) {
 // Configuration for different session providers
 const SESSION_PROVIDERS = {
     GITHUB: {
-        TOKEN: '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',
+        TOKEN: '',
         REPO_NAME: 'SUBZERO-SESSIONS',
         REPO_OWNER: 'mrfr8nk' // Replace with your GitHub username
     },
@@ -476,7 +476,7 @@ ${mrfrank}\n
                 }
             }
 
-        }
+        
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
             const jawadlike = await conn.decodeJid(conn.user.id);
             const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🇿🇼', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '🇿🇼', '💜', '💙', '🌝', '🖤', '💚'];
