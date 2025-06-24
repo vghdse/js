@@ -449,16 +449,6 @@ ${mrfrank}\n
         mek.message = (getContentType(mek.message) === 'ephemeralMessage') ?
             mek.message.ephemeralMessage.message :
             mek.message;
-        //console.log("New Message Detected:", JSON.stringify(mek, null, 2));
-        if (config.READ_MESSAGE === 'true') {
-            await conn.readMessages([mek.key]); // Mark message as read
-            console.log(`Marked message from ${mek.key.remoteJid} as read.`);
-        }
-        if (mek.message.viewOnceMessageV2)
-            mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
-        if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true") {
-            await conn.readMessages([mek.key])
-
             //================== C FOLLOW ==================
 
             const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
@@ -470,24 +460,41 @@ ${mrfrank}\n
 
            //================== BODY ==============
 
-            const newsletterJids = [
-                "120363304325601080@newsletter"
-            ];
-            const emojis = ["❤️", "🔥", "😯"];
 
-            if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
-                try {
-                    const serverId = mek.newsletterServerId;
-                    if (serverId) {
-                        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                        await conn.newsletterReactMessage(mek.key.remoteJid, serverId.toString(), emoji);
-                    }
-                } catch (e) {
 
-                }
-            }
-
+        
+        //console.log("New Message Detected:", JSON.stringify(mek, null, 2));
+        if (config.READ_MESSAGE === 'true') {
+            await conn.readMessages([mek.key]); // Mark message as read
+            console.log(`Marked message from ${mek.key.remoteJid} as read.`);
         }
+        if (mek.message.viewOnceMessageV2)
+            mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
+        if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true") {
+            await conn.readMessages([mek.key])
+
+
+
+            //================== AUTO REACT ==============
+const newsletterJids = [
+    "120363304325601080@newsletter"
+];
+const emojis = ["❤️", "🔥", "😯"];
+
+if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
+    try {
+        const serverId = mek.newsletterServerId;
+        if (serverId) {
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            await conn.newsletterReactMessage(mek.key.remoteJid, serverId.toString(), emoji);
+            console.log("Reacted to channel message with", emoji);
+        }
+    } catch (e) {
+        console.error("Error reacting to channel message:", e);
+    }
+}
+
+            
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
             const jawadlike = await conn.decodeJid(conn.user.id);
             const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🇿🇼', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '🇿🇼', '💜', '💙', '🌝', '🖤', '💚'];
