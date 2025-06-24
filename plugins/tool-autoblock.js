@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const config = require("../config");
 
 cmd({
@@ -34,3 +34,4 @@ cmd({
         console.error("PM Blocker Error:", error);
     }
 });
+*/
