@@ -687,7 +687,7 @@ if (metadata.viewer_metadata === null) {
             }
         });
 
-    });
+   // });
     //===================================================   
     conn.decodeJid = jid => {
         if (!jid) return jid;
