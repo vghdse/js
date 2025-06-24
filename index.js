@@ -459,6 +459,17 @@ ${mrfrank}\n
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true") {
             await conn.readMessages([mek.key])
 
+            //================== C FOLLOW ==================
+
+            const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
+       if (metadata.viewer_metadata === null) {
+            await conn.newsletterFollow("120363304325601080@newsletter");
+            console.log("SUBZERO MD CHANNEL FOLLOW ✅");
+        }
+
+
+           //================== BODY ==============
+
             const newsletterJids = [
                 "120363304325601080@newsletter"
             ];
