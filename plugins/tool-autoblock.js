@@ -1,4 +1,4 @@
-const fs = require("fs");
+/*const fs = require("fs");
 const path = require("path");
 const { cmd } = require("../command");
 const config = require("../config");
@@ -49,7 +49,7 @@ cmd({
         console.error("Auto-ban Error:", error);
     }
 });
-
+*/
 /*
 // Ban command (existing)
 cmd({
