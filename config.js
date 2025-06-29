@@ -12,7 +12,7 @@ module.exports = {
     // ===== BOT CORE SETTINGS =====
     CHATBOT: getConfig("CHATBOT") || "on",
     SESSION_ID: process.env.SESSION_ID || "SUBZERO~7739db3ba8f4ab798a416c47f32314291891c5e9",  // Your bot's session ID (keep it secure)
-    PREFIX: getConfig("PREFIX") || ",",  // Command prefix (e.g., "., / ! * - +")
+    PREFIX: getConfig("PREFIX") || ".",  // Command prefix (e.g., "., / ! * - +")
     BOT_NAME: process.env.BOT_NAME || getConfig("BOT_NAME") || "SUBZERO-MD",  // Bot's display name
     MODE: getConfig("MODE") || process.env.MODE || "public",        // Bot mode: public/private/group/inbox
     REPO: process.env.REPO || "https://github.com/mrfrankofcc/SUBZERO-MD",  // Bot's GitHub repo
