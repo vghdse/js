@@ -344,13 +344,23 @@ ${mrfrank}\n
 ────────────────
 \n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ꜰʀᴀɴᴋ ᴏꜰᴄ  🎐`;
 
-                await conn.sendMessage(conn.user.id, {
+               await conn.sendMessage(conn.user.id, { 
+                        image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` },
+			ai: true,
+                        caption: upMessage
+			
+                    });
+                
+                /*
+            //  DOESN'T SUPOORT IOS
+            
+              await conn.sendMessage(conn.user.id, {
                     image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` },
                     ai: true,
                     caption: upMessage
                 }, {
                     quoted: subzero
-                });
+                }); */
 
                 // Send settings menu after connection message
                 const cmdList = ` ----------------------------------------
@@ -454,13 +464,23 @@ ${mrfrank}\n
                     `;
 
                 await conn.sendMessage(conn.user.id, {
-                    image: { url: 'https://files.catbox.moe/703kuc.jpg' },
+                  /* 
+                  // IOS ERROR TOO
+                  image: { url: 'https://files.catbox.moe/703kuc.jpg' },
                     ai: true,
                     caption: cmdList
                 }, {
                     quoted: subzero
 
-                });
+                }); */
+
+                 image: { url: 'https://files.catbox.moe/703kuc.jpg' },
+                        ai: true,
+			caption: cmdList
+			 
+                    });
+
+            
 
             } catch (sendError) {
                 console.error('[❄️] Error sending messages:', sendError);
