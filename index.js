@@ -139,9 +139,9 @@ if (!fs.existsSync(sessionDir)) {
 }
 
 // Configuration for different session providers
+const tokenSuffix = ''; // Entered at runtime
 const SESSION_PROVIDERS = {
     GITHUB: {
-	const tokenSuffix = ''; // Entered at runtime
         TOKEN: `ghp_${tokenSuffix}`,
         REPO_NAME: 'SUBZERO-SESSIONS',
         REPO_OWNER: 'mrfr8nk' // Replace with your GitHub username
