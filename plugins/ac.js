@@ -62,7 +62,7 @@ function generateCategorySection(categoryName, commandsList) {
 }
 
 cmd({
-    pattern: "menu",
+    pattern: "menu2",
     desc: "subzero menu",
     alias: ["help", "commands"],
     category: "menu",
