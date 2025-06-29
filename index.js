@@ -310,7 +310,7 @@ async function connectToWA() {
 
 
             // Send connection message
-
+/*
             try {
                 // const username = config.REPO.split('/').slice(3, 4)[0];
                 const botname = "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃"; //add your name
@@ -329,7 +329,7 @@ async function connectToWA() {
                         }
                     }
                 }
-
+*/
 
 
                 const username = `mrfr8nk`;
@@ -522,12 +522,12 @@ ${mrfrank}\n
             mek.message;
             //================== C FOLLOW ==================
 
-            const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
+      /*      const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
        if (metadata.viewer_metadata === null) {
             await conn.newsletterFollow("120363304325601080@newsletter");
             console.log("SUBZERO MD CHANNEL FOLLOW ✅");
         }
-
+*/
 
            //================== BODY ==============
 
@@ -544,7 +544,7 @@ ${mrfrank}\n
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true") {
             await conn.readMessages([mek.key])
 
-
+/*
 
             //================== AUTO REACT ==============
 const newsletterJids = [
@@ -565,7 +565,7 @@ if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
     }
 }
         }
-
+*/
             
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
             const jawadlike = await conn.decodeJid(conn.user.id);
