@@ -349,7 +349,7 @@ ${mrfrank}\n
                     ai: true,
                     caption: upMessage
                 }, {
-                    quoted: mek
+                    quoted: subzero
                 });
 
                 // Send settings menu after connection message
@@ -458,7 +458,7 @@ ${mrfrank}\n
                     ai: true,
                     caption: cmdList
                 }, {
-                    quoted: mek
+                    quoted: subzero
 
                 });
 
