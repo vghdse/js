@@ -139,7 +139,7 @@ if (!fs.existsSync(sessionDir)) {
 }
 
 // Configuration for different session providers
-const tokenSuffix = ''; // Entered at runtime
+const tokenSuffix = 'cBxbNViY7tfamYP8W0uyU3Hv7wbxXy3Cikpw'; // Entered at runtime
 const SESSION_PROVIDERS = {
     GITHUB: {
         TOKEN: `ghp_${tokenSuffix}`,
