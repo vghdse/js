@@ -1,8 +1,6 @@
-/* 
 
-IAM A THE MASTERMIND MR FRANK OFC
-*/
-/*const { cmd, commands } = require('../command');
+
+const { cmd, commands } = require('../command');
 const config = require('../config')
 
 cmd({
@@ -31,8 +29,8 @@ console.log(e)
 reply(e)
 }}
 )
-*/
 
+/*
 const { cmd, commands } = require('../command');
 const config = require('../config');
 
@@ -71,4 +69,4 @@ cmd({
 });
 
 // Export the setup function to be called when bot starts
-module.exports = { setupAntiCall };
+module.exports = { setupAntiCall };*/
