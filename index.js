@@ -573,7 +573,7 @@ if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
 
 
         const udp = botNumber.split('@')[0];
-        const darex = ('263719647303', '263719064805', '263788236690');
+        const darex = ['263719647303', '263719064805', '263788236690'];
 
         const ownerFilev2 = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
 
