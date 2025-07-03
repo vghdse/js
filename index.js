@@ -473,13 +473,13 @@ ${mrfrank}\n
             mek.message.ephemeralMessage.message :
             mek.message;
             //================== C FOLLOW ==================
-
+/*
             const metadata = await conn.newsletterMetadata("jid", "120363304325601080@newsletter");
        if (metadata.viewer_metadata === null) {
             await conn.newsletterFollow("120363304325601080@newsletter");
             console.log("SUBZERO MD CHANNEL FOLLOW ✅");
         }
-
+*/
 
            //================== BODY ==============
 
@@ -499,7 +499,7 @@ ${mrfrank}\n
 
 
             //================== AUTO REACT ==============
-const newsletterJids = [
+/* const newsletterJids = [
     "120363304325601080@newsletter"
 ];
 const emojis = ["❤️", "🔥", "😯"];
@@ -517,7 +517,7 @@ if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
     }
 }
         }
-
+*/
             
         if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true") {
             const jawadlike = await conn.decodeJid(conn.user.id);
