@@ -618,8 +618,8 @@ if (!isRealOwner && !isGroup && config.MODE === "groups") return;
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
 if (isCmd) {
-    const cmd = events.commands.find((cmd)
-                cmd.pattern === (cmdName)) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName))
+    const cmd = events.commands.find((cmd) => cmd.pattern === cmdName) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName));
+    cmd.pattern === (cmdName)) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName))
             if (cmd) {
                 if (cmd.react) conn.sendMessage(from, { react: { text: cmd.react, key: mek.key } })
 
