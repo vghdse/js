@@ -31,7 +31,7 @@ const {
   const ff = require('fluent-ffmpeg')
   const P = require('pino')
   const GroupEvents = require('./lib/groupevents');
-  const { PresenceControl, BotActivityFilter } = require('./data/presence');
+//  const { PresenceControl, BotActivityFilter } = require('./data/presence');
   const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
   const util = require('util')
@@ -335,10 +335,10 @@ conn.ev.on('presence.update', async (update) => {
 
 // always Online 
 
-conn.ev.on("presence.update", (update) => PresenceControl(conn, update));
+//conn.ev.on("presence.update", (update) => PresenceControl(conn, update));
 
 	
-BotActivityFilter(conn);	
+//BotActivityFilter(conn);	
 	
  /// READ STATUS       
   conn.ev.on('messages.upsert', async(mek) => {
