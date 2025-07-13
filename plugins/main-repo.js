@@ -11,9 +11,9 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { reply }) => {
   try {
-    await reply('🔍 Fetching SubZero repository info from NexOracle...');
+    await reply('🔍 Fetching SubZero repository info..');
 
-    const apiUrl = 'https://api.nexoracle.com/search/github-repo?apikey=e276311658d835109c&url=https://github.com/mrfr8nk/SUBZERO-MD';
+    const apiUrl = 'https://api.nexoracle.com/search/github-repo?apikey=e276311658d835109c&url=https://github.com/mrfrankofcc/SUBZERO-MD';
     const { data } = await axios.get(apiUrl, { timeout: 10000 });
 
     if (data.status !== 200 || !data.result) throw new Error('Invalid response from NexOracle API');
@@ -29,7 +29,7 @@ cmd({
 
 📂 *Repository:* ${repo.name}
 👤 *Owner:* ${owner.login}
-🙋‍♂️ *Developer:* ${data.owner}
+🙋‍♂️ *Developer:* Darrell Mucheri
 🔗 *URL:* ${repo.html_url}
 
 ⭐ *Stars:* ${repo.stargazers_count}
