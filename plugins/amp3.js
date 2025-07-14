@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
 const Config = require('../config');
@@ -279,5 +279,5 @@ cmd(
                 console.error('Final reaction failed:', reactError);
             }
         }
-    }
+    }*/
 );
