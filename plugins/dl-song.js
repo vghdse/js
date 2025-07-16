@@ -19,7 +19,7 @@ const KAIZ_API_URL = 'https://kaiz-apis.gleeze.com/api/ytdown-mp3';
 cmd(
     {
         pattern: 'song',
-        alias: ['music', 'music'],
+        alias: ['play', 'music'],
         desc: 'High quality YouTube audio downloader',
         category: 'media',
         react: '🎵',
