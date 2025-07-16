@@ -2,14 +2,11 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
 
-// API configuration
-const YT_API = 'https://romektricks-subzero-yt.hf.space/yt';
-
 cmd(
     {
-        pattern: 'yt1',
-        alias: ['youtube1', 'video1'],
-        desc: 'YouTube video/audio downloader',
+        pattern: 'yt',
+        alias: ['youtube', 'song'],
+        desc: 'Download YouTube videos/audio',
         category: 'media',
         react: '⬇️',
         use: '<url or search term>',
@@ -19,101 +16,88 @@ cmd(
         try {
             if (!text) return reply('🎬 *Usage:* .yt <url/query>\nExample: .yt https://youtu.be/...\n.yt never gonna give you up');
 
-            // Send initial processing message
-            const processingMsg = await reply('🔍 Searching... Please wait');
+            // Show processing message
+            await reply('🔍 Processing your request...');
 
-            // Check if input is URL or search query
-            const isUrl = text.match(/(youtube\.com|youtu\.be)/i);
-            let videoUrl, videoInfo;
-
-            if (isUrl) {
-                videoUrl = text;
-                videoInfo = await yts({ videoId: text.match(/[?&]v=([^&]+)/)?.[1] || text.split('/').pop() });
-            } else {
-                const searchResults = await yts(text);
-                if (!searchResults.videos.length) return reply('❌ No results found');
-                videoInfo = searchResults.videos[0];
-                videoUrl = videoInfo.url;
+            // Get video info from API
+            const apiUrl = `https://romektricks-subzero-yt.hf.space/yt?query=${encodeURIComponent(text)}`;
+            const { data } = await axios.get(apiUrl);
+            
+            if (!data.success || !data.result) {
+                return reply('❌ Failed to fetch video info');
             }
 
-            // Fetch download links from API
-            const { data: apiData } = await axios.get(`${YT_API}?query=${encodeURIComponent(videoUrl)}`);
-            if (!apiData?.success) return reply('❌ Failed to get download links');
+            const video = data.result;
+            const thumbnailUrl = video.thumbnail || video.image;
 
-            // Prepare media information
-            const title = videoInfo?.title || apiData.result?.title || 'YouTube Media';
-            const duration = videoInfo?.timestamp || apiData.result?.timestamp || 'N/A';
-            const views = videoInfo?.views ? videoInfo.views.toLocaleString() + ' views' : '';
-            const author = videoInfo?.author?.name || 'Unknown';
+            // Prepare info message with options
+            const infoMsg = `🎬 *${video.title}*\n\n` +
+                           `⏱ Duration: ${video.timestamp || video.duration?.timestamp || 'N/A'}\n` +
+                           `👤 Author: ${video.author?.name || 'Unknown'}\n` +
+                           `👀 Views: ${video.views ? video.views.toLocaleString() : 'N/A'}\n\n` +
+                           `*Reply with:*\n` +
+                           `1 - For Video Download (${video.timestamp || ''}) 🎥\n` +
+                           `2 - For Audio Download (MP3) 🎵\n\n` +
+                           `_Expires in 2 minutes_`;
 
-            // Send media info with options
-            const optionsMsg = `🎬 *${title}*\n\n` +
-                              `⏱ Duration: ${duration}\n` +
-                              `👤 Author: ${author}\n` +
-                              `👀 Views: ${views}\n\n` +
-                              `*Reply with:*\n` +
-                              `1 - For Video Format 🎥\n` +
-                              `2 - For Audio Format 🎵\n\n` +
-                              `_Download will start immediately_`;
+            // Send video info with thumbnail
+            const sentMsg = await conn.sendMessage(
+                msg.chat,
+                {
+                    image: { url: thumbnailUrl },
+                    caption: infoMsg
+                },
+                { quoted: msg }
+            );
 
-            // Delete processing message
-            try {
-                await conn.sendMessage(msg.chat, { delete: processingMsg.key });
-            } catch (deleteError) {
-                console.log('Failed to delete processing message');
-            }
+            // Set up response handler
+            const responseHandler = async (m) => {
+                if (!m.message || m.key.remoteJid !== msg.chat) return;
 
-            // Send options message
-            const sentMsg = await conn.sendMessage(msg.chat, { 
-                text: optionsMsg,
-                ...(videoInfo?.thumbnail && { image: { url: videoInfo.thumbnail } })
-            }, { quoted: msg });
-
-            // Set up response listener
-            const responseListener = async (messageUpdate) => {
-                const response = messageUpdate.messages[0];
-                if (!response?.message || !response.key?.fromMe) return;
-
-                const isReply = response.message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
-                const choice = response.message.conversation || response.message.extendedTextMessage?.text;
+                const isReply = m.message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
+                const choice = m.message.conversation || m.message.extendedTextMessage?.text;
 
                 if (!isReply || !['1', '2'].includes(choice)) return;
 
                 // Remove listener
-                conn.ev.off('messages.upsert', responseListener);
+                conn.ev.off('messages.upsert', responseHandler);
 
                 // Delete the options message
                 try {
                     await conn.sendMessage(msg.chat, { delete: sentMsg.key });
-                } catch (deleteError) {
-                    console.log('Failed to delete options message');
+                } catch (e) {
+                    console.log('Could not delete message:', e);
                 }
 
-                // Get download URL based on choice
-                const downloadType = choice === '1' ? 'video' : 'audio';
-                const downloadUrl = apiData.result.download?.[downloadType] || apiData.result.url;
-                const fileExt = downloadType === 'video' ? 'mp4' : 'mp3';
-                const fileName = `${title.replace(/[<>:"\/\\|?*]+/g, '')}.${fileExt}`;
+                // Get download URL
+                const downloadUrl = choice === '1' ? video.download.video : video.download.audio;
+                const fileType = choice === '1' ? 'video' : 'audio';
+                const fileName = `${video.title.replace(/[^\w\s]/gi, '')}.${fileType === 'video' ? 'mp4' : 'mp3'}`;
 
                 // Send downloading message
-                await reply(`⬇️ Downloading ${downloadType}...`);
+                await reply(`⬇️ Downloading ${fileType === 'video' ? 'video' : 'audio'}...`);
 
                 // Send the media file
                 await conn.sendMessage(
                     msg.chat,
-                    { 
-                        [downloadType]: { url: downloadUrl },
-                        mimetype: downloadType === 'video' ? 'video/mp4' : 'audio/mpeg',
+                    {
+                        [fileType]: { url: downloadUrl },
+                        mimetype: fileType === 'video' ? 'video/mp4' : 'audio/mpeg',
                         fileName: fileName
                     },
                     { quoted: msg }
                 );
             };
 
-            conn.ev.on('messages.upsert', responseListener);
+            // Set timeout for response
+            setTimeout(() => {
+                conn.ev.off('messages.upsert', responseHandler);
+            }, 120000); // 2 minute timeout
+
+            conn.ev.on('messages.upsert', responseHandler);
 
         } catch (error) {
-            console.error('YT Download Error:', error);
+            console.error('YouTube Download Error:', error);
             reply('❌ Error: ' + (error.message || 'Failed to process request'));
         }
     }
