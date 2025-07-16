@@ -11,7 +11,7 @@ function convertToBool(text, fault = 'true') {
 module.exports = {
     // ===== BOT CORE SETTINGS =====
     CHATBOT: getConfig("CHATBOT") || "on",
-    SESSION_ID: process.env.SESSION_ID || "SUBZERO-MD;;;fU00GDRa#fl-vfxt2plSDz5cNsm6wdVJAEZ7etBQMpS8WH1QWeL0",  // Your bot's session ID (keep it secure)
+    SESSION_ID: settings.SESSION_ID || process.env.SESSION_ID || "", // Your bot's session ID (keep it secure)
     PREFIX: getConfig("PREFIX") || ".",  // Command prefix (e.g., "., / ! * - +")
     BOT_NAME: process.env.BOT_NAME || getConfig("BOT_NAME") || "SUBZERO-MD",  // Bot's display name
     MODE: getConfig("MODE") || process.env.MODE || "public",        // Bot mode: public/private/group/inbox
@@ -19,7 +19,7 @@ module.exports = {
     BAILEYS: process.env.BAILEYS || "@whiskeysockets/baileys",  // Bot's BAILEYS
 
     // ===== OWNER & DEVELOPER SETTINGS =====
-    OWNER_NUMBER: process.env.OWNER_NUMBER || "263719647303",  // Owner's WhatsApp number
+    OWNER_NUMBER: settings.OWNER_NUMBER || process.env.OWNER_NUMBER || "263719647303",  // Owner's WhatsApp number
     OWNER_NAME: process.env.OWNER_NAME || getConfig("OWNER_NAME") || "Mr Frank",           // Owner's name
     DEV: process.env.DEV || "263719647303",                     // Developer's contact number
     DEVELOPER_NUMBER: '263719647303@s.whatsapp.net',            // Developer's WhatsApp ID
@@ -47,7 +47,7 @@ module.exports = {
 
     // ===== SECURITY & ANTI-FEATURES =====
     ANTI_DELETE: process.env.ANTI_DELETE || "true",
-    ANTI_CALL: process.env.ANTI_CALL || "true",
+    ANTI_CALL: process.env.ANTI_CALL || "false",
     ANTI_BAD: process.env.ANTI_BAD || "false",                  // Block bad words?
     ANTI_LINK: process.env.ANTI_LINK || "true",                 // Block links in groups?
     ANTI_VV: process.env.ANTI_VV || "true",                     // Block view-once messages?
