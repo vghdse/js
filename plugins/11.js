@@ -35,7 +35,7 @@ cmd(
                 return reply('❌ Failed to get video download link');
             }
 
-            const videoUrl = data.result.download.video;
+            const videoDownloadUrl = data.result.download.video;
             const title = data.result.title || 'YouTube Video';
             const fileName = `${title.replace(/[<>:"\/\\|?*]+/g, '')}.mp4`;
 
@@ -44,7 +44,7 @@ cmd(
             await conn.sendMessage(
                 msg.chat,
                 {
-                    video: { url: videoUrl },
+                    video: { url: videoDownloadUrl },
                     mimetype: 'video/mp4',
                     fileName: fileName,
                     caption: title
