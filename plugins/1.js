@@ -4,8 +4,8 @@ const yts = require('yt-search');
 
 cmd(
     {
-        pattern: 'song',
-        alias: ['music', 'audio'],
+        pattern: 'song2',
+        alias: ['music2', 'audio'],
         desc: 'Download high quality audio from YouTube',
         category: 'media',
         react: '🎵',
