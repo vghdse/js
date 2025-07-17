@@ -4,101 +4,117 @@ const yts = require('yt-search');
 
 cmd(
     {
-        pattern: 'yt',
-        alias: ['youtube', 'song'],
-        desc: 'Download YouTube videos/audio',
+        pattern: 'song',
+        alias: ['music', 'audio'],
+        desc: 'Download high quality audio from YouTube',
         category: 'media',
-        react: '⬇️',
-        use: '<url or search term>',
+        react: '🎵',
+        use: '<song name or YouTube url>',
         filename: __filename
     },
     async (conn, msg, { text, reply }) => {
         try {
-            if (!text) return reply('🎬 *Usage:* .yt <url/query>\nExample: .yt https://youtu.be/...\n.yt never gonna give you up');
+            if (!text) return reply('🎵 *Usage:* .song <query/url>\nExample: .song https://youtu.be/...\n.song never gonna give you up');
 
-            // Show processing message
-            await reply('🔍 Processing your request...');
-
-            // Get video info from API
-            const apiUrl = `https://romektricks-subzero-yt.hf.space/yt?query=${encodeURIComponent(text)}`;
-            const { data } = await axios.get(apiUrl);
+            // Search for video if not URL
+            let videoUrl = text;
+            let videoInfo = null;
             
-            if (!data.success || !data.result) {
-                return reply('❌ Failed to fetch video info');
+            if (!text.match(/(youtube\.com|youtu\.be)/i)) {
+                const search = await yts(text);
+                if (!search.videos.length) return reply('❌ No results found');
+                videoInfo = search.videos[0];
+                videoUrl = videoInfo.url;
             }
 
-            const video = data.result;
-            const thumbnailUrl = video.thumbnail || video.image;
+            // Get download link from API
+            const apiUrl = `https://romektricks-subzero-yt.hf.space/yt?query=${encodeURIComponent(videoUrl)}`;
+            const { data } = await axios.get(apiUrl);
+            
+            if (!data?.success || !data?.result?.download?.audio) {
+                return reply('❌ Failed to get audio download link');
+            }
 
-            // Prepare info message with options
-            const infoMsg = `🎬 *${video.title}*\n\n` +
-                           `⏱ Duration: ${video.timestamp || video.duration?.timestamp || 'N/A'}\n` +
-                           `👤 Author: ${video.author?.name || 'Unknown'}\n` +
-                           `👀 Views: ${video.views ? video.views.toLocaleString() : 'N/A'}\n\n` +
-                           `*Reply with:*\n` +
-                           `1 - For Video Download (${video.timestamp || ''}) 🎥\n` +
-                           `2 - For Audio Download (MP3) 🎵`;
+            const audioUrl = data.result.download.audio;
+            const title = data.result.title || 'YouTube Audio';
+            const fileName = `${title.replace(/[<>:"\/\\|?*]+/g, '')}.mp3`;
 
-            // Send video info with thumbnail
-            const sentMsg = await conn.sendMessage(
+            // Send audio file
+            await reply('⬇️ Downloading audio...');
+            await conn.sendMessage(
                 msg.chat,
                 {
-                    image: { url: thumbnailUrl },
-                    caption: infoMsg
+                    audio: { url: audioUrl },
+                    mimetype: 'audio/mpeg',
+                    fileName: fileName,
+                    ptt: false
                 },
                 { quoted: msg }
             );
 
-            // Set up response handler
-            const handleResponse = async (mek) => {
-                try {
-                    if (!mek.message || !mek.key.remoteJid === msg.chat) return;
+        } catch (error) {
+            console.error('Song Download Error:', error);
+            reply('❌ Error: ' + (error.message || 'Failed to download audio'));
+        }
+    }
+);
 
-                    const isReply = mek.message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
-                    const choice = mek.message.conversation || mek.message.extendedTextMessage?.text;
 
-                    if (!isReply || !['1', '2'].includes(choice)) return;
 
-                    // Remove listener
-                    conn.ev.off('messages.upsert', handleResponse);
 
-                    // Delete the options message
-                    try {
-                        await conn.sendMessage(msg.chat, { delete: sentMsg.key });
-                    } catch (e) {
-                        console.log('Could not delete message:', e);
-                    }
+cmd(
+    {
+        pattern: 'video',
+        alias: ['ytvideo', 'vid'],
+        desc: 'Download high quality videos from YouTube',
+        category: 'media',
+        react: '🎬',
+        use: '<video name or YouTube url>',
+        filename: __filename
+    },
+    async (conn, msg, { text, reply }) => {
+        try {
+            if (!text) return reply('🎬 *Usage:* .video <query/url>\nExample: .video https://youtu.be/...\n.video cute cat videos');
 
-                    // Get download URL
-                    const downloadUrl = choice === '1' ? video.download.video : video.download.audio;
-                    const fileType = choice === '1' ? 'video' : 'audio';
-                    const fileName = `${video.title.replace(/[^\w\s]/gi, '')}.${fileType === 'video' ? 'mp4' : 'mp3'}`;
+            // Search for video if not URL
+            let videoUrl = text;
+            let videoInfo = null;
+            
+            if (!text.match(/(youtube\.com|youtu\.be)/i)) {
+                const search = await yts(text);
+                if (!search.videos.length) return reply('❌ No results found');
+                videoInfo = search.videos[0];
+                videoUrl = videoInfo.url;
+            }
 
-                    // Send downloading message
-                    await reply(`⬇️ Downloading ${fileType === 'video' ? 'video' : 'audio'}...`);
+            // Get download link from API
+            const apiUrl = `https://romektricks-subzero-yt.hf.space/yt?query=${encodeURIComponent(videoUrl)}`;
+            const { data } = await axios.get(apiUrl);
+            
+            if (!data?.success || !data?.result?.download?.video) {
+                return reply('❌ Failed to get video download link');
+            }
 
-                    // Send the media file
-                    await conn.sendMessage(
-                        msg.chat,
-                        {
-                            [fileType]: { url: downloadUrl },
-                            mimetype: fileType === 'video' ? 'video/mp4' : 'audio/mpeg',
-                            fileName: fileName
-                        },
-                        { quoted: mek }  // Quote the user's reply
-                    );
+            const videoUrl = data.result.download.video;
+            const title = data.result.title || 'YouTube Video';
+            const fileName = `${title.replace(/[<>:"\/\\|?*]+/g, '')}.mp4`;
 
-                } catch (error) {
-                    console.error('Response handling error:', error);
-                    reply('❌ Error processing your request');
-                }
-            };
-
-            conn.ev.on('messages.upsert', handleResponse);
+            // Send video file
+            await reply('⬇️ Downloading video...');
+            await conn.sendMessage(
+                msg.chat,
+                {
+                    video: { url: videoUrl },
+                    mimetype: 'video/mp4',
+                    fileName: fileName,
+                    caption: title
+                },
+                { quoted: msg }
+            );
 
         } catch (error) {
-            console.error('YouTube Download Error:', error);
-            reply('❌ Error: ' + (error.message || 'Failed to process request'));
+            console.error('Video Download Error:', error);
+            reply('❌ Error: ' + (error.message || 'Failed to download video'));
         }
     }
 );
