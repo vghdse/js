@@ -4,8 +4,8 @@ const yts = require('yt-search');
 
 cmd(
     {
-        pattern: 'video',
-        alias: ['ytvideo', 'vid'],
+        pattern: 'video2',
+        alias: ['ytvideo2', 'vid2'],
         desc: 'Download high quality videos from YouTube',
         category: 'media',
         react: '🎬',
