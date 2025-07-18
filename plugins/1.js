@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const axios = require('axios');
 const Config = require('../config');
 
@@ -116,7 +116,7 @@ cmd(
   }
 );
 
-
+*/
 
 /*const { cmd } = require('../command');
 const axios = require('axios');
