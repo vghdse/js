@@ -81,7 +81,7 @@ cmd({
   if (!isOwner) return reply("❌ Owner only command!");
   
   try {
-    const repoUrl = config.REPO || "https://github.com/mrfraank/SUBZERO";
+    const repoUrl = config.REPO || "https://github.com/mrfrankofcc/SUBZERO-MD";
     const repoApiUrl = repoUrl.replace('github.com', 'api.github.com/repos');
     
     // Get current local version
