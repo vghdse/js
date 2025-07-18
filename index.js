@@ -469,11 +469,11 @@ ${mrfrank}\n
                 }); */
 
                 // Send settings menu after connection message
-                const cmdList = ` ----------------------------------------
+                const cmdList = `  ----------------------------------------
     \`\`\`SUBZERO BOT SETTINGS\`\`\`
     -----------------------------------------
     
-🔧 *1. \`Mode\`*
+🔧 *1. \`Mode.\`*
    - Current Status: ${config.MODE || "public"}
    - Usage: ${config.PREFIX}mode private/public
 
