@@ -32,25 +32,25 @@ module.exports = {
     READ_MESSAGE: process.env.READ_MESSAGE || "false",          // Mark messages as read automatically?
 
     // ===== REACTION & STICKER SETTINGS =====
-    AUTO_REACT: process.env.AUTO_REACT || "false",              // Auto-react to messages?
+    AUTO_REACT: getConfig("AUTO_REACT") || process.env.AUTO_REACT || "false",              // Auto-react to messages?
     CUSTOM_REACT: process.env.CUSTOM_REACT || "false",          // Use custom emoji reactions?
     CUSTOM_REACT_EMOJIS: process.env.CUSTOM_REACT_EMOJIS || "💝,💖,💗,❤️‍🩹,❤️,🧡,💛,💚,💙,💜,🤎,🖤,🤍",  // Custom reaction emojis
     STICKER_NAME: process.env.STICKER_NAME || "SUBZERO-MD",     // Sticker pack name
     AUTO_STICKER: process.env.AUTO_STICKER || "false",          // Auto-send stickers?
     HEART_REACT: process.env.HEART_REACT || "false",
-    OWNER_REACT: process.env.OWNER_REACT || "false",
+    OWNER_REACT: getConfig("OWNER_REACT") ||process.env.OWNER_REACT || "false",
     
     // ===== MEDIA & AUTOMATION =====
     AUTO_VOICE: process.env.AUTO_VOICE || "false",              // Auto-send voice messages?
-    AUTO_RECORDING: process.env.AUTO_RECORDING || "false",      // Auto-record voice notes?
-    AUTO_TYPING: process.env.AUTO_TYPING || "false",            // Show typing indicator?
+    AUTO_RECORDING: getConfig("AUTO_RECORDING") || process.env.AUTO_RECORDING || "false",      // Auto-record voice notes?
+    AUTO_TYPING:  getConfig("AUTO_TYPING") || process.env.AUTO_TYPING || "false",            // Show typing indicator?
     BOT_IMAGE: getConfig("BOT_IMAGE") || "https://i.postimg.cc/XNTmcqZ3/subzero-menu.png",  // Bot's "alive" image
 
     // ===== SECURITY & ANTI-FEATURES =====
     ANTI_DELETE: process.env.ANTI_DELETE || "true",
-    ANTI_CALL: process.env.ANTI_CALL || "false",
+    ANTI_CALL: getConfig("ANTICALL") || process.env.ANTI_CALL || "false",
     ANTI_BAD: process.env.ANTI_BAD || "false",                  // Block bad words?
-    ANTI_LINK: process.env.ANTI_LINK || "true",                 // Block links in groups?
+    ANTI_LINK: getConfig("ANTILINK") || process.env.ANTI_LINK || "true",                 // Block links in groups?
     ANTI_VV: process.env.ANTI_VV || "true",                     // Block view-once messages?
     DELETE_LINKS: process.env.DELETE_LINKS || "false",          // Auto-delete links?
     ANTI_DEL_PATH: process.env.ANTI_DEL_PATH || "inbox",          // Log deleted messages (or 'same' to resend)
@@ -60,11 +60,11 @@ module.exports = {
     // ===== BOT BEHAVIOR & APPEARANCE =====
     FOOTER: process.env.FOOTER || "*© Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*",  // Bot description
     PUBLIC_MODE: process.env.PUBLIC_MODE || "true",              // Allow public commands?
-    ALWAYS_ONLINE: process.env.ALWAYS_ONLINE || "false",        // Show bot as always online?
-    AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "true", // React to status updates?
-    AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN || "true", // VIEW to status updates?
-    AUTO_BIO: process.env.AUTO_BIO || "false",
-    WELCOME_GOODBYE: process.env.WELCOME_GOODBYE || "false",
+    ALWAYS_ONLINE:  getConfig("ALWAYS_ONLINE") || process.env.ALWAYS_ONLINE || "false",        // Show bot as always online?
+    AUTO_STATUS_REACT: getConfig("AUTO_STATUS_REACT") || process.env.AUTO_STATUS_REACT || "true", // React to status updates?
+    AUTO_STATUS_SEEN: getConfig("AUTO_STATUS_SEEN") || process.env.AUTO_STATUS_SEEN || "true", // VIEW to status updates?
+    AUTO_BIO: getConfig("AUTO_BIO") || process.env.AUTO_BIO || "false",
+    WELCOME_GOODBYE: getConfig("WELCOME_GOODBYE") || process.env.WELCOME_GOODBYE || "false",
     AMDIN_EVENTS: process.env.ADMIN_EVENTS || "true",
 };
 
