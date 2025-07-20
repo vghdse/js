@@ -68,8 +68,11 @@ cmd({
     const ownerJid = conn.user.id.split(":")[0] + '@s.whatsapp.net';
     if (users === ownerJid) return reply("👑 That's the owner! I can't remove them.");
 
-    await conn.groupParticipantsUpdate(from, [users], "remove");
-    reply(`*✅ Successfully removed from group.*`, { mentions: [users] });
+    /*await conn.groupParticipantsUpdate(from, [users], "remove");
+    reply(`*✅ Successfully removed from group.*`, { mentions: [users] });*/
+      await conn.groupParticipantsUpdate(from, [users], "remove");
+await sendCustomMessage(conn, from, `*✅ Successfully removed from group.*`, mek, m);
+
 
   } catch (err) {
     console.error(err);
@@ -118,8 +121,11 @@ cmd({
     const ownerJid = conn.user.id.split(":")[0] + '@s.whatsapp.net';
     if (users === ownerJid) return reply("👑 Owner is already super admin!");
 
-    await conn.groupParticipantsUpdate(from, [users], "promote");
-    reply(`*✅ Successfully Promoted to Admin.*`, { mentions: [users] });
+   /* await conn.groupParticipantsUpdate(from, [users], "promote");
+    reply(`*✅ Successfully Promoted to Admin.*`, { mentions: [users] });*/
+      await conn.groupParticipantsUpdate(from, [users], "promote");
+await sendCustomMessage(conn, from, `*✅ Successfully Promoted to Admin.*`, mek, m);
+
 
   } catch (err) {
     console.error(err);
@@ -168,8 +174,11 @@ cmd({
     const ownerJid = conn.user.id.split(":")[0] + '@s.whatsapp.net';
     if (users === ownerJid) return reply("👑 I can't demote the owner!");
 
-    await conn.groupParticipantsUpdate(from, [users], "demote");
-    reply(`*✅ Admin Successfully demoted to a normal member.*`, { mentions: [users] });
+    /*await conn.groupParticipantsUpdate(from, [users], "demote");
+    reply(`*✅ Admin Successfully demoted to a normal member.*`, { mentions: [users] });*/
+      await conn.groupParticipantsUpdate(from, [users], "demote");
+await sendCustomMessage(conn, from, `*✅ Admin Successfully demoted to a normal member.*`, mek, m);
+
 
   } catch (err) {
     console.error(err);
@@ -283,7 +292,7 @@ async (conn, mek, m, { from, q, isGroup, isBotAdmins, senderNumber }) => {
     }
 });
 
-
+/*
 // ==========================
 // Promote Member Command
 // ==========================
@@ -353,7 +362,7 @@ async (conn, mek, m, { from, q, isGroup, senderNumber, botNumber, isAdmins, isBo
     }
 });
 
-
+*/
 // ==========================
 // Unmute Group Command
 // ==========================
