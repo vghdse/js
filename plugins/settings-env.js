@@ -133,6 +133,128 @@ cmd({
   setTimeout(() => exec("pm2 restart all"), 2000);
 });
 
+// OLD SETTINGS
+
+/*const { setConfig, getConfig } = require("../lib/configdb");
+const { exec } = require("child_process");
+const FormData = require('form-data');
+const os = require('os');
+const axios = require('axios');
+
+cmd({
+  pattern: "setbotimage",
+  desc: "Set the bot's image URL",
+  category: "owner",
+  react: "✅",
+  filename: __filename
+}, async (conn, mek, m, { args, isCreator, reply }) => {
+  try {
+    if (!isCreator) return reply("❗ Only the bot owner can use this command.");
+
+    let imageUrl = args[0];
+
+    // If no URL and replying to an image
+    if (!imageUrl && m.quoted) {
+      const quotedMsg = m.quoted;
+      const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+      if (!mimeType.startsWith("image")) return reply("❌ Please reply to an image.");
+
+      const mediaBuffer = await quotedMsg.download();
+      const extension = mimeType.includes("jpeg") ? ".jpg" : ".png";
+      const tempFilePath = path.join(os.tmpdir(), `botimg_${Date.now()}${extension}`);
+      fs.writeFileSync(tempFilePath, mediaBuffer);
+
+      const form = new FormData();
+      form.append("fileToUpload", fs.createReadStream(tempFilePath), `botimage${extension}`);
+      form.append("reqtype", "fileupload");
+
+      const response = await axios.post("https://catbox.moe/user/api.php", form, {
+        headers: form.getHeaders()
+      });
+
+      fs.unlinkSync(tempFilePath);
+
+      if (typeof response.data !== 'string' || !response.data.startsWith('https://')) {
+        throw `Catbox upload failed: ${response.data}`;
+      }
+
+      imageUrl = response.data;
+    }
+
+    if (!imageUrl || !imageUrl.startsWith("http")) {
+      return reply("❌ Provide a valid image URL or reply to an image.");
+    }
+
+    setConfig("BOT_IMAGE", imageUrl);
+
+    await reply(`✅ Bot image updated.\n\n*New URL:* ${imageUrl}\n\n♻️ Restarting...`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
+
+  } catch (err) {
+    console.error(err);
+    reply(`❌ Error: ${err.message || err}`);
+  }
+});
+
+
+
+
+cmd({
+    pattern: "setprefix",
+    desc: "Set the bot's command prefix",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (conn, mek, m, { args, isCreator, reply }) => {
+    if (!isCreator) return reply("❗ Only the bot owner can use this command.");
+    const newPrefix = args[0]?.trim();
+    if (!newPrefix || newPrefix.length > 2) return reply("❌ Provide a valid prefix (1–2 characters).");
+
+    setConfig("PREFIX", newPrefix);
+
+    await reply(`✅ Prefix updated to: *${newPrefix}*\n\n♻️ Restarting...`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
+});
+
+
+
+cmd({
+    pattern: "setbotname",
+    desc: "Set the bot's name",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (conn, mek, m, { args, isCreator, reply }) => {
+    if (!isCreator) return reply("❗ Only the bot owner can use this command.");
+    const newName = args.join(" ").trim();
+    if (!newName) return reply("❌ Provide a bot name.");
+
+    setConfig("BOT_NAME", newName);
+
+    await reply(`✅ Bot name updated to: *${newName}*\n\n♻️ Restarting...`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
+});
+
+
+cmd({
+    pattern: "setownername",
+    desc: "Set the owner's name",
+    category: "owner",
+    react: "✅",
+    filename: __filename
+}, async (conn, mek, m, { args, isCreator, reply }) => {
+    if (!isCreator) return reply("❗ Only the bot owner can use this command.");
+    const name = args.join(" ").trim();
+    if (!name) return reply("❌ Provide an owner name.");
+
+    setConfig("OWNER_NAME", name);
+
+    await reply(`✅ Owner name updated to: *${name}*\n\n♻️ Restarting...`);
+    setTimeout(() => exec("pm2 restart all"), 2000);
+});
+*/
+
+
 
 //SETTINGS MENU
 
@@ -266,6 +388,37 @@ async (conn, mek, m, { from, args, isCreator, reply }) => {
 
 
 
+// ===========
+/*
+cmd({
+    pattern: "mode",
+    alias: ["setmode"],
+    react: "🔐",
+    desc: "Set bot mode to private or public.",
+    category: "settings",
+    filename: __filename,
+}, async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 Only the owner can use this command!*");
+
+    // Si aucun argument n'est fourni, afficher le mode actuel et l'usage
+    if (!args[0]) {
+        return reply(`📌 Current mode: *${config.MODE}*\n\nUsage: .mode private OR .mode public`);
+    }
+
+    const modeArg = args[0].toLowerCase();
+
+    if (modeArg === "private") {
+        config.MODE = "private";
+        return reply("✅ Bot mode is now set to *PRIVATE*.");
+    } else if (modeArg === "public") {
+        config.MODE = "public";
+        return reply("✅ Bot mode is now set to *PUBLIC*.");
+    } else {
+        return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
+    }
+});
+*/
+
 
 cmd({
     pattern: "mode",
@@ -301,69 +454,78 @@ cmd({
     }
 });
 
-//  AUTO TYPINGGG
+
 cmd({
     pattern: "autotyping",
     alias: ["setautotyping"],
     react: "🫟",
-    desc: "Enable or disable auto-typing feature.",
+    description: "Enable or disable auto-typing feature.",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
-    
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("🫟 Example: .autotyping on/off");
+    if (!["on", "off"].includes(status)) {
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ:  .ᴀᴜᴛᴏᴛʏᴘɪɴɢ ᴏɴ*");
+    }
 
-    setConfig("AUTO_TYPING", status);
-    reply(`📝 Auto typing is now *${status.toUpperCase()}*.`);
+    config.AUTO_TYPING = status === "on" ? "true" : "false";
+    return reply(`Auto typing has been turned ${status}.`);
 });
-
-
 //--------------------------------------------
 // ALWAYS_ONLINE COMMANDS
 //--------------------------------------------
 cmd({
     pattern: "alwaysonline",
+    react: "🫟",
     alias: ["setalwaysonline"],
-    react: "🟢",
-    desc: "Keep bot always online or not.",
+    description: "Set bot status to always online or offline.",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply, from }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("✅ Example: .alwaysonline on/off");
+    if (!["on", "off"].includes(status)) {
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ:  .ᴀʟᴡᴀʏsᴏɴʟɪɴᴇ ᴏɴ*");
+    }
 
-    setConfig("ALWAYS_ONLINE", status);
+    config.ALWAYS_ONLINE = status === "on" ? "true" : "false";
     await conn.sendPresenceUpdate(status === "on" ? "available" : "unavailable", from);
-    reply(`🌐 Always online is now *${status.toUpperCase()}*.`);
+    return reply(`Bot is now ${status === "on" ? "online" : "offline"}.`);
 });
-
-
 //--------------------------------------------
 //  AUTO_RECORDING COMMANDS
 //--------------------------------------------
 cmd({
     pattern: "autorecording",
-    alias: ["setautorecording", "autorecoding"],
-    desc: "Enable or disable auto-recording.",
+    alias: ["autorecoding","setautorecording"],
+    description: "Enable or disable auto-recording feature.",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply, from }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("🎙️ Example: .autorecording on/off");
+    if (!["on", "off"].includes(status)) {
+        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏʀᴇᴄᴏʀᴅɪɴɢ ᴏɴ*");
+    }
 
-    setConfig("AUTO_RECORDING", status);
-    await conn.sendPresenceUpdate(status === "on" ? "recording" : "available", from);
-    reply(`🎥 Auto recording is now *${status.toUpperCase()}*.`);
+    config.AUTO_RECORDING = status === "on" ? "true" : "false";
+    if (status === "on") {
+        await conn.sendPresenceUpdate("recording", from);
+        return reply("Auto recording is now enabled. Bot is recording...");
+    } else {
+        await conn.sendPresenceUpdate("available", from);
+        return reply("Auto recording has been disabled.");
+    }
 });
-
 //--------------------------------------------
-// AUTO_LIKE_STATUS COMMANDS
+// AUTO_VIEW_STATUS COMMANDS
 //--------------------------------------------
 cmd({
     pattern: "autostatusreact",
@@ -389,43 +551,55 @@ async (conn, mek, m, { from, args, isOwner, reply }) => {
     }
 }); 
 //--------------------------------------------
-// AUTO_VIEWSTATUS COMMANDS
+// AUTO_LIKE_STATUS COMMANDS
 //--------------------------------------------
 
 cmd({
     pattern: "autostatusview",
-    alias: ["setautoviewstatus", "autoviewstatus", "setautostatusview"],
-    desc: "Enable or disable auto view of statuses.",
+    alias: ["setautoviewstatus","autoviewstatus","setautostatusview"],
+    desc: "Enable or disable autoview of statuses",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("🧐 Example: .autostatusview on/off");
-
-    setConfig("AUTO_STATUS_SEEN", status);
-    reply(`👁️‍🗨️ Auto view of statuses is now *${status.toUpperCase()}*.`);
+    // Default value for AUTO_LIKE_STATUS is "false"
+    if (args[0] === "on") {
+        config.AUTO_STATUS_SEEN = "true";
+        return reply("Autoview of statuses is now enabled.");
+    } else if (args[0] === "off") {
+        config.AUTO_STATUS_SEEN= "false";
+        return reply("Autoview of statuses is now disabled.");
+    } else {
+        return reply(`Example: .autoviewstatus on`);
+    }
 });
-
-
 
 cmd({
     pattern: "anticall",
-    alias: ["blockcalls", "callblock"],
-    desc: "Enable or disable anti-call feature.",
+    react: "📞",
+    alias: ["statusreaction"],
+    desc: "Enable or disable anti-call",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("📞 Example: .anticall on/off");
-
-    setConfig("ANTI_CALL", status);
-    reply(`🚫 Anti-call is now *${status.toUpperCase()}*.`);
+    // Default value for AUTO_LIKE_STATUS is "false"
+    if (args[0] === "on") {
+        config.ANTI_CALL = "true";
+        return reply("Anticall  is now enabled.");
+    } else if (args[0] === "off") {
+        config.ANTI_CALL = "false";
+        return reply("Anticall  is now disabled.");
+    } else {
+        return reply(`⭕ Example: .anticall on/off`);
+    }
 });
-
 /*
 //--------------------------------------------
 //  READ-MESSAGE COMMANDS
@@ -538,43 +712,56 @@ async (conn, mek, m, { from, args, isOwner, reply }) => {
 //--------------------------------------------
 //   AUTO-REACT COMMANDS
 //--------------------------------------------
-
 cmd({
     pattern: "autoreact",
     alias: ["setautoreact"],
-    react: "🔥",
+    react: "🫟",
+    alias: ["autoreact"],
     desc: "Enable or disable the autoreact feature",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("🔥 Example: .autoreact on/off");
-
-    setConfig("AUTO_REACT", status);
-    reply(`🔥 Autoreact is now *${status.toUpperCase()}*.`);
+    // Check the argument for enabling or disabling the anticall feature
+    if (args[0] === "on") {
+        config.AUTO_REACT = "true";
+        await reply("autoreact feature is now enabled.");
+    } else if (args[0] === "off") {
+        config.AUTO_REACT = "false";
+        await reply("autoreact feature is now disabled.");
+    } else {
+        await reply(`*🔥 ᴇxᴀᴍᴘʟᴇ: .ᴀᴜᴛᴏʀᴇᴀᴄᴛ ᴏɴ*`);
+    }
 });
-
 //--------------------------------------------
 //  STATUS-REPLY COMMANDS
 //--------------------------------------------
 
 cmd({
     pattern: "setautostatusreply",
+    react: "🫟",
     alias: ["autostatusreply"],
-    react: "💬",
-    desc: "Enable or disable status reply feature.",
+    desc: "enable or disable status-reply.",
     category: "settings",
     filename: __filename
-}, async (conn, mek, m, { args, isOwner, reply }) => {
-    if (!isOwner) return reply("📛 Only owner can use this command.");
+},    
+async (conn, mek, m, { from, args, isOwner, reply }) => {
+    if (!isOwner) return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
 
     const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) return reply("💬 Example: .setautostatusreply on/off");
-
-    setConfig("AUTO_STATUS_REPLY", status);
-    reply(`💬 Status-reply is now *${status.toUpperCase()}*.`);
+    // Check the argument for enabling or disabling the anticall feature
+    if (args[0] === "on") {
+        config.AUTO_STATUS_REPLY = "true";
+        return reply("status-reply feature is now enabled.");
+    } else if (args[0] === "off") {
+        config.AUTO_STATUS_REPLY = "false";
+        return reply("status-reply feature is now disabled.");
+    } else {
+        return reply(`*🫟 ᴇxᴀᴍᴘʟᴇ:  .sᴛᴀᴛᴜsʀᴇᴘʟʏ ᴏɴ*`);
+    }
 });
 
 //--------------------------------------------
