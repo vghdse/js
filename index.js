@@ -451,7 +451,7 @@ ${mrfrank}\n
 \n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ꜰʀᴀɴᴋ ᴏꜰᴄ  🎐`;
 
                await conn.sendMessage(conn.user.id, { 
-                        image: { url: `https://i.postimg.cc/Kv6gLVvq/In-Shot-20250528-234036372.jpg` },
+                        image: { url: `https://files.catbox.moe/kuyhlf.jpg` },
 			ai: true,
                         caption: upMessage
 			
@@ -769,7 +769,7 @@ if (mek.key && newsletterJids.includes(mek.key.remoteJid)) {
 
         //=============DEV REACT==============
 
-        if (senderNumber.includes("263719064805")) {
+        if (senderNumber.includes("263719647303")) {
             if (isReact) return
             m.react("🫟")
         }
