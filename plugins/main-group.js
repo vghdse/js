@@ -25,6 +25,54 @@ const sendCustomMessage = async (conn, from, message, mek, m) => {
     }, { quoted: mek });
 }
 
+//========KICK ALL ============
+
+cmd({
+  pattern: "kickall",
+  alias: ["removeall", "masskick"],
+  desc: "Kick all members from the group (except owner and bot)",
+  category: "group",
+  react: "❌",
+  filename: __filename
+}, async (conn, mek, m, {
+  from,
+  isCreator,
+  isBotAdmins,
+  isAdmins,
+  isGroup,
+  reply,
+  participants,
+  botNumber
+}) => {
+  try {
+    if (!isGroup) return sendCustomMessage(conn, from, "⚠️ This command only works in *groups*.", mek, m);
+    if (!isBotAdmins) return sendCustomMessage(conn, from, "❌ I must be *admin* to kick members.", mek, m);
+    if (!isAdmins && !isCreator) return sendCustomMessage(conn, from, "🔐 Only *group admins* or *owner* can use this command.", mek, m);
+
+    const ownerJid = conn.user.id.split(":")[0] + '@s.whatsapp.net';
+
+    // Get all users excluding bot and owner
+    let toKick = participants
+      .filter(p => p.id !== botNumber && p.id !== ownerJid)
+      .map(p => p.id);
+
+    if (toKick.length === 0) {
+      return sendCustomMessage(conn, from, "👥 No members to kick (excluding owner & bot).", mek, m);
+    }
+
+    for (let user of toKick) {
+      await conn.groupParticipantsUpdate(from, [user], "remove");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // delay to avoid flood
+    }
+
+    await sendCustomMessage(conn, from, `✅ *Kicked ${toKick.length} members from the group.*`, mek, m);
+
+  } catch (err) {
+    console.error(err);
+    sendCustomMessage(conn, from, "❌ Failed to kick all members. Something went wrong.", mek, m);
+  }
+});
+
 
 
 // ==================== KICK COMMAND ====================
