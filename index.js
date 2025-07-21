@@ -451,7 +451,7 @@ ${mrfrank}\n
 \n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ꜰʀᴀɴᴋ ᴏꜰᴄ  🎐`;
 
                await conn.sendMessage(conn.user.id, { 
-                        image: { url: `https://files.catbox.moe/kuyhlf.jpg` },
+                        image: { url: `https://files.catbox.moe/xmldwy.jpg` },
 			ai: true,
                         caption: upMessage
 			
@@ -580,7 +580,7 @@ ${mrfrank}\n
 
                 }); */
 
-                 image: { url: 'https://files.catbox.moe/703kuc.jpg' },
+                 image: { url: 'https://files.catbox.moe/xmldwy.jpg' },
                         ai: true,
 			caption: cmdList
 			 
