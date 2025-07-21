@@ -44,7 +44,7 @@ module.exports = {
     AUTO_VOICE: process.env.AUTO_VOICE || "false",              // Auto-send voice messages?
     AUTO_RECORDING: getConfig("AUTO_RECORDING") || process.env.AUTO_RECORDING || "false",      // Auto-record voice notes?
     AUTO_TYPING:  getConfig("AUTO_TYPING") || process.env.AUTO_TYPING || "false",            // Show typing indicator?
-    BOT_IMAGE: getConfig("BOT_IMAGE") || "https://i.postimg.cc/XNTmcqZ3/subzero-menu.png",  // Bot's "alive" image
+    BOT_IMAGE: getConfig("BOT_IMAGE") || "https://files.catbox.moe/kuyhlf.jpg",  // https://i.postimg.cc/XNTmcqZ3/subzero-menu.png Bot's "alive" image
 
     // ===== SECURITY & ANTI-FEATURES =====
     ANTI_DELETE: process.env.ANTI_DELETE || "true",
