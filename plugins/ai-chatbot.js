@@ -171,7 +171,7 @@ cmd({
         const prompt = encodeURIComponent("you are subzero md whatsapp bot made by mr frank ofc ( darrell mucheri ). a tech genius in zimbabwe. act smart and enigmatic about personal stuff about him. He is 17 years (2025).Every mesaage you reply put footer \n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ 🤖");
 
         // BK9 API Request
-        const apiUrl = `https://bk9.fun/ai/BK93?BK9=${prompt}&q=${query}`;
+        const apiUrl = `https://api.bk9.dev//ai/BK93?BK9=${prompt}&q=${query}`;
 
         const { data } = await axios.get(apiUrl);
 
