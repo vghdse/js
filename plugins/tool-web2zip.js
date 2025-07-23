@@ -79,7 +79,7 @@ cmd({
       from,
       {
         video: videoBuffer,
-        caption: `🎬 *${videoData.title}*\n${videoData.duration ? `⏳ Duration: ${videoData.duration}\n` : ''}\n📥 Downloaded via ${config.BOT_NAME}`,
+        caption: `🎬 *${videoData.title}*\n${videoData.duration ? `⏳ Duration: ${videoData.duration}\n` : ''}\n${config.FOOTER}`,
         contextInfo: {
           mentionedJid: [m.sender],
           forwardingScore: 999,
@@ -149,7 +149,7 @@ cmd({
         document: zipBuffer,
         fileName: filename,
         mimetype: "application/zip",
-        caption: `🗂️ *Website Archive*\n🌐 ${siteUrl}\n📂 ${copiedFilesAmount} files\n\n📥 Downloaded via ${config.BOT_NAME}`,
+        caption: `🗂️ *Website Archive*\n🌐 ${siteUrl}\n📂 ${copiedFilesAmount} files\n\n${config.FOOTER}`,
         contextInfo: {
           mentionedJid: [m.sender],
           forwardingScore: 999,
