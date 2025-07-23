@@ -118,8 +118,8 @@ const { setConfig, getConfig } = require("../lib/configdb");
 let AI_ENABLED = "false"; // Default enabled
 
 cmd({
-    pattern: "aichat",
-    alias: ["chatbot", "subzerobot"],
+    pattern: "chatbot",
+    alias: ["aichat", "subzerobot"],
     desc: "Enable or disable AI chatbot responses",
     category: "settings",
     filename: __filename,
