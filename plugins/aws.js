@@ -79,9 +79,9 @@ function generateCategoryMenu(categoryName, commandsList) {
 }
 
 cmd({
-    pattern: "menu",
+    pattern: "menua",
     desc: "Interactive menu with numbered categories",
-    alias: ["help", "commands", "list", "cmdlist", "listcmd"],
+    alias: ["helpa", "commands", "list", "cmdlist", "listcmd"],
     category: "menu",
     react: "✅",
     filename: __filename
