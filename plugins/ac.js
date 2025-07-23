@@ -1,4 +1,4 @@
-/*const config = require('../config');
+const config = require('../config');
 const { cmd, commands } = require('../command');
 const os = require("os");
 const { runtime } = require('../lib/functions');
@@ -64,7 +64,7 @@ function generateCategorySection(categoryName, commandsList) {
 cmd({
     pattern: "menu2",
     desc: "subzero menu",
-    alias: ["help", "commands"],
+    alias: ["help", "commands","list","cmdlist","listcmd"],
     category: "menu",
     react: "✅",
     filename: __filename
