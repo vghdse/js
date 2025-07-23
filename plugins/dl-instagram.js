@@ -103,7 +103,7 @@ cmd({
 });
 // VIDEO SECTION
 
-
+/*
 cmd({
   pattern: "igvid",
   alias: ["igvideo","ig","instagram", "igdl"],
@@ -158,6 +158,135 @@ cmd({
       caption: `📥 *Instagram Video*\n\n` +
         `🔖 *Title*: ${title || "No title"}\n\n` +
         `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`,
+      contextInfo: {
+        mentionedJid: [m.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
+    // Add a reaction to indicate success
+    await conn.sendMessage(from, { react: { text: '✅', key: m.key } });
+  } catch (error) {
+    console.error('Error downloading Instagram video:', error);
+    reply('❌ Unable to download the video. Please try again later.');
+
+    // Add a reaction to indicate failure
+    await conn.sendMessage(from, { react: { text: '❌', key: m.key } });
+  }
+});
+*/
+
+
+cmd({
+  pattern: "igvid",
+  alias: ["igvideo","ig","instagram", "igdl"],
+  react: '📥',
+  desc: "Download Instagram videos.",
+  category: "download",
+  use: ".igvid <Instagram video URL>",
+  filename: __filename
+}, async (conn, mek, m, { from, reply, args }) => {
+  try {
+    // Check if the user provided an Instagram video URL
+    const igUrl = args[0];
+    if (!igUrl || !igUrl.includes("instagram.com")) {
+      return reply('Please provide a valid Instagram video URL. Example: `.igvid https://instagram.com/...`');
+    }
+
+    // Add a reaction to indicate processing
+    await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
+
+    // Prepare the primary API URL
+    const primaryApiUrl = `https://api.nexoracle.com/downloader/aio2?apikey=free_key@maher_apis&url=${encodeURIComponent(igUrl)}`;
+    
+    // Prepare fallback APIs
+    const fallbackApis = [
+      `https://api.giftedtech.web.id/api/download/instadl?apikey=gifted&url=${encodeURIComponent(igUrl)}`,
+      `https://kaiz-apis.gleeze.com/api/insta-dl?url=${encodeURIComponent(igUrl)}&apikey=cf2ca612-296f-45ba-abbc-473f18f991eb`
+    ];
+
+    let videoData = null;
+    let apiIndex = 0;
+    const apis = [primaryApiUrl, ...fallbackApis];
+
+    // Try each API until we get a successful response
+    while (apiIndex < apis.length && !videoData) {
+      try {
+        const response = await axios.get(apis[apiIndex]);
+        
+        // Parse response based on which API responded
+        if (apiIndex === 0) {
+          // Primary API (Nexoracle) response format
+          if (response.data && response.data.status === 200 && response.data.result) {
+            const { title, low, high } = response.data.result;
+            videoData = {
+              title: title || "Instagram Video",
+              downloadUrl: high || low,
+              thumbnail: response.data.result.thumbnail || null
+            };
+          }
+        } else if (apiIndex === 1) {
+          // GiftedTech API response format
+          if (response.data && response.data.success && response.data.result) {
+            videoData = {
+              title: "Instagram Video",
+              downloadUrl: response.data.result.download_url,
+              thumbnail: response.data.result.thumbnail || null
+            };
+          }
+        } else if (apiIndex === 2) {
+          // Kaizenji API response format
+          if (response.data && response.data.result) {
+            videoData = {
+              title: response.data.result.title || "Instagram Video",
+              downloadUrl: response.data.result.video_url,
+              thumbnail: response.data.result.thumbnail || null,
+              views: response.data.result.view_count,
+              likes: response.data.result.like_count,
+              duration: response.data.result.duration
+            };
+          }
+        }
+      } catch (error) {
+        console.error(`Error with API ${apiIndex}:`, error.message);
+      }
+      apiIndex++;
+    }
+
+    if (!videoData) {
+      return reply('❌ All download services failed. Please try again later.');
+    }
+
+    // Inform the user that the video is being downloaded
+    await reply(`📥 *Downloading ${videoData.title}... Please wait.*`);
+
+    // Download the video
+    const videoResponse = await axios.get(videoData.downloadUrl, { responseType: 'arraybuffer' });
+    if (!videoResponse.data) {
+      return reply('❌ Failed to download the video. Please try again later.');
+    }
+
+    // Prepare the video buffer
+    const videoBuffer = Buffer.from(videoResponse.data, 'binary');
+
+    // Build caption with available details
+    let caption = `📥 *Instagram Video*\n\n`;
+    caption += `🔖 *Title*: ${videoData.title}\n`;
+    if (videoData.views) caption += `👀 *Views*: ${videoData.views.toLocaleString()}\n`;
+    if (videoData.likes) caption += `❤️ *Likes*: ${videoData.likes.toLocaleString()}\n`;
+    if (videoData.duration) caption += `⏱️ *Duration*: ${videoData.duration} seconds\n`;
+    caption += `\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`;
+
+    // Send the video
+    await conn.sendMessage(from, {
+      video: videoBuffer,
+      caption: caption,
       contextInfo: {
         mentionedJid: [m.sender],
         forwardingScore: 999,
