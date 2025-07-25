@@ -1,4 +1,4 @@
-const { cmd } = require("../command");
+/* const { cmd } = require("../command");
 const axios = require("axios");
 
 // ==============================================
@@ -73,3 +73,4 @@ cmd({
   await conn.sendMessage(from, buttonMessage, { quoted: mek });
 });
 
+*/
