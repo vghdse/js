@@ -1,7 +1,7 @@
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "test",
+  pattern: "testx",
   desc: "Test command with formatted reply",
   category: "utility",
   react: "⚡",
