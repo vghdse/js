@@ -1,44 +1,43 @@
-const { cmd } = require("../command");
+const config = require('../config');
+const { cmd } = require('../command');
 
 cmd({
   pattern: "testx",
-  desc: "Test command with formatted reply",
-  category: "utility",
-  react: "⚡",
+  desc: "Check bot online or not.",
+  category: "main",
+  react: "👋",
   filename: __filename
-}, async (m, conn) => {
+},
+async (conn, mek, m, {
+  from, pushname, reply
+}) => {
   try {
-    await conn.sendMessage(
-      m.chat, 
-      { text: "hello 👋" }, 
-      {
-        quoted: {
-          key: {
-            remoteJid: "status@broadcast",
-            fromMe: false,
-            id: "BAE5F2EB3A64C5A1",
-            participant: "0@s.whatsapp.net"
-          },
-          message: {
-            extendedTextMessage: {
-              text: "Powering Smart Automation",
-              contextInfo: {
-                externalAdReply: {
-                  title: "WhatsApp Business",
-                  body: "Group",
-                  thumbnailUrl: "",
-                  sourceUrl: "",
-                  mediaType: 1,
-                  renderLargerThumbnail: true
-                }
-              }
-            }
-          }
+    const subzero = {
+      key: {
+        remoteJid: "120363025249792xxx@g.us", // fake group ID
+        fromMe: false,
+        id: "ABCD1234", // random id
+        participant: "0@s.whatsapp.net"
+      },
+      message: {
+        groupInviteMessage: {
+          groupJid: "120363025249792xxx@g.us",
+          inviteCode: "AbcdEFG1234",
+          groupName: "Smart Automation", // will show after WhatsApp Business
+          caption: "Powering Smart Automation", // ← This is your visible quote
+          jpegThumbnail: Buffer.from([]), // blank or add a thumbnail buffer
         }
       }
-    );
-  } catch (error) {
-    console.error("Test command error:", error);
-    m.reply("❌ An error occurred while sending the test message");
+    };
+
+    const msg = `*👋 Hello ${pushname}!*`;
+
+    await conn.sendMessage(from, {
+      text: msg
+    }, { quoted: subzero });
+
+  } catch (e) {
+    console.log(e);
+    reply(`${e}`);
   }
 });
