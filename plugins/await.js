@@ -12,7 +12,7 @@ async (conn, mek, m, {
   from, pushname, reply
 }) => {
   try {
-    const subzero = {
+    /*const subzero = {
       key: {
         remoteJid: "120363025249792xxx@g.us", // fake group ID
         fromMe: false,
@@ -29,12 +29,27 @@ async (conn, mek, m, {
         }
       }
     };
-
+*/const mrfrank = {
+  key: {
+    remoteJid: '120363025036063173@g.us',
+    fromMe: false,
+    participant: '0@s.whatsapp.net'
+  },
+  message: {
+    groupInviteMessage: {
+      groupJid: '120363025036063173@g.us',
+      inviteCode: 'ABCD1234',
+      groupName: 'WhatsApp ✅ • Group',
+      caption: 'Subzero Smart Project',
+      jpegThumbnail: null
+    }
+  }
+}
     const msg = `*👋 Hello ${pushname}!*`;
 
     await conn.sendMessage(from, {
       text: msg
-    }, { quoted: subzero });
+    }, { quoted: mrfrank });
 
   } catch (e) {
     console.log(e);
