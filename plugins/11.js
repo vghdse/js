@@ -127,3 +127,42 @@ cmd({
     viewOnce: true
   }, { quoted: m });
 });
+
+
+        cmd({
+  pattern: "menux",
+  desc: "Show button menu",
+  category: "tools",
+  filename: __filename
+}, async (conn, mek, m, { from, prefix }) => {
+  
+  const picUrl = "https://i.postimg.cc/G3k8H6gC/IMG-20250603-WA0017.jpg";
+  
+  // Create buttons array
+  const buttons = [
+    {
+      buttonId: `${prefix}ping`,
+      buttonText: { displayText: 'PING' },
+      type: 1
+    },
+    {
+      buttonId: `${prefix}alive`,
+      buttonText: { displayText: 'ALIVE' },
+      type: 1
+    },
+    {
+      buttonId: `${prefix}showmenu all`,
+      buttonText: { displayText: '📋 ALL COMMANDS' },
+      type: 1
+    }
+  ];
+
+  // Send message with buttons
+  await conn.sendMessage(from, {
+    image: { url: picUrl },
+    caption: "📋 *Main Menu*\n\nSelect an option below:",
+    footer: "XBOT-MD Menu System",
+    buttons: buttons,
+    headerType: 4
+  }, { quoted: m });
+});
