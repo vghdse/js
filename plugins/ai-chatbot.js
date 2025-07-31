@@ -113,7 +113,22 @@ const axios = require('axios');
 const { cmd, commands } = require('../command');
 const config = require("../config");
 const { setConfig, getConfig } = require("../lib/configdb");
-
+const ice = {
+  key: {
+    remoteJid: '120363025036063173@g.us',
+    fromMe: false,
+    participant: '0@s.whatsapp.net'
+  },
+  message: {
+    groupInviteMessage: {
+      groupJid: '120363025036063173@g.us',
+      inviteCode: 'ABCD1234',
+      groupName: 'WhatsApp ✅ • Group',
+      caption: 'Subzero Smart Project',
+      jpegThumbnail: null
+    }
+  }
+}
 // Default AI state if not set
 let AI_ENABLED = "false"; // Default enabled
 
@@ -178,7 +193,7 @@ cmd({
         if (data && data.status && data.BK9) {
             await conn.sendMessage(from, {
                 text: data.BK9
-            }, { quoted: m });
+            }, { quoted: ice });
         } else {
             reply("⚠️ Subzero AI failed to generate a response.");
         }
